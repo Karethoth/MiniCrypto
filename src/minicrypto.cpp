@@ -54,7 +54,6 @@ int main(int, char**)
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
-  //ImGui::StyleColorsClassic();
 
   // Setup Platform/Renderer bindings
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);

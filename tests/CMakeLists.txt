@@ -10,6 +10,8 @@ if(NOT Catch2_POPULATED)
   FetchContent_MakeAvailable(Catch2)
 endif()
 
+include(../CMakeFiles/config.cmake)
+
 # Tests
 enable_testing()
 set(CTEST_OUTPUT_ON_FAILURE 1)
