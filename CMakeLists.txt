@@ -16,6 +16,7 @@ include_directories(
 
 set (PROJECT_SOURCES
   "src/minicrypto.cpp"
+  "src/utils.cpp"
 )
 
 set (IMGUI_SOURCES
