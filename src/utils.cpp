@@ -71,3 +71,52 @@ hex_string minicrypto::byte_to_hex_string(const byte_string &input)
 
   return result;
 }
+
+static uint8_t _base64_table[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+base64_string minicrypto::byte_to_base64_string(const byte_string &input)
+{
+  base64_string result = "";
+  uint8_t work_bits = 0;
+  uint8_t work_bits_count = 0;
+  for (const auto &c : input)
+  {
+    // Add as many bits to the work_bits as can fit
+    work_bits  |= c >> (2 + work_bits_count);
+
+    // Using the six rightmost bits as the index, grab character from the table
+    result += _base64_table[0b00111111 & work_bits];
+
+    // Place leftover bits from c to the work_bits
+    work_bits = c;
+
+    // work_bits_count is always incremented by two, since we are consuming 6/8 bits when adding a new Base64 character
+    work_bits_count += 2;
+
+    // In case we have 6 characters ready in the work_bits, we can add the character rightaway
+    if (work_bits_count >= 6)
+    {
+      result += _base64_table[0b00111111 & work_bits];
+      work_bits_count = 0;
+    }
+
+    // Make room for the next bits
+    work_bits <<= 6 - work_bits_count;
+  }
+
+  // Print remining bits and append '='s if necessary
+  if (work_bits_count > 0)
+  {
+    result += _base64_table[0b00111111 & work_bits];
+    if (work_bits_count == 2)
+    {
+      result += "==";
+    }
+    else if (work_bits_count == 4)
+    {
+      result += "=";
+    }
+  }
+
+  return result;
+}

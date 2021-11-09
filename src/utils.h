@@ -9,4 +9,6 @@ namespace minicrypto
 
   byte_string hex_to_byte_string(const hex_string &input);
   hex_string byte_to_hex_string(const byte_string &input);
+
+  base64_string byte_to_base64_string(const byte_string &input);
 }

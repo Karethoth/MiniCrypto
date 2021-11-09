@@ -47,3 +47,21 @@ TEST_CASE("Byte to Hex conversion", "[byte_to_hex_string]")
 
   REQUIRE(byte_to_hex_string("\x41\x00\x41"s) == byte_string{"410041"});
 }
+
+TEST_CASE("Bytes to base64 conversion", "[byte_to_base64_string]")
+{
+  REQUIRE(byte_to_base64_string("Many hands make light work.") == base64_string{"TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu"});
+  REQUIRE(byte_to_base64_string("light work.") == base64_string{"bGlnaHQgd29yay4="});
+  REQUIRE(byte_to_base64_string("light work") == base64_string{"bGlnaHQgd29yaw=="});
+  REQUIRE(byte_to_base64_string("light wor") == base64_string{"bGlnaHQgd29y"});
+  REQUIRE(byte_to_base64_string("light wo") == base64_string{"bGlnaHQgd28="});
+  REQUIRE(byte_to_base64_string("light w") == base64_string{"bGlnaHQgdw=="});
+}
+
+TEST_CASE("Hex to base64 conversion", "[hex_to_base64_string]")
+{
+  const auto set_1_challenge_1_bytes = hex_to_byte_string("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d");
+  const auto set_1_challenge_1_base64 = byte_to_base64_string(set_1_challenge_1_bytes);
+
+  REQUIRE(set_1_challenge_1_base64 == "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t");
+}
