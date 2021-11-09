@@ -43,3 +43,6 @@ target_link_libraries(minicrypto
   ${SDL2_LIBRARIES}
   ${IMGUI_LIBRARIES}
 )
+
+include(CTest)
+add_subdirectory(tests)
