@@ -20,6 +20,7 @@ set (PROJECT_SOURCES
   "src/utils.cpp"
   "src/nodes/node.cpp"
   "src/nodes/pin.cpp"
+  "src/nodes/link.cpp"
 )
 
 set (IMGUI_SOURCES

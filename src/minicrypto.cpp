@@ -1,5 +1,8 @@
 #include "MiniCrypto.h"
 
+#include "nodes/node.h"
+#include "nodes/link.h"
+
 #include <vector>
 #include <imgui.h>
 #include <backends/imgui_impl_sdl.h>
@@ -7,8 +10,6 @@
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
-
-#include "nodes/node.h"
 
 namespace ed = ax::NodeEditor;
 
@@ -68,6 +69,8 @@ int main(int, char**)
   nodes.emplace_back(generate_basic_pins());
   nodes.emplace_back(generate_basic_pins());
 
+  std::vector<minicrypto::LinkInfo> links{};
+
   bool done = false;
   while (!done)
   {
@@ -93,11 +96,59 @@ int main(int, char**)
     ed::SetCurrentEditor(g_Context);
     ed::Begin("My Editor", ImVec2(0.0, 0.0f));
     int uniqueId = 1;
-    // Start drawing nodes.
-    for(auto& node : nodes)
+
+    for (auto &node : nodes)
     {
       node.update();
     }
+
+    for (auto &link : links)
+    {
+      link.register_link();
+    }
+
+    if (ed::BeginCreate())
+    {
+      ed::PinId input_pin_id, output_pin_id;
+      if (ed::QueryNewLink(&input_pin_id, &output_pin_id))
+      {
+        if (input_pin_id && output_pin_id) // both are valid, let's accept link
+        {
+          if (ed::AcceptNewItem())
+          {
+            links.emplace_back(input_pin_id, output_pin_id);
+            links.back().register_link();
+          }
+        }
+      }
+    }
+    ed::EndCreate();
+
+    if (ed::BeginDelete())
+    {
+      ed::LinkId deleted_link_id;
+      while (ed::QueryDeletedLink(&deleted_link_id))
+      {
+        if (ed::AcceptDeletedItem())
+        {
+          auto link = std::begin(links);
+          while (link != links.end())
+          {
+            if (link->get_id() == deleted_link_id)
+            {
+              links.erase(link);
+              break;
+            }
+            else
+            {
+              ++link;
+            }
+          }
+        }
+      }
+    }
+    ed::EndDelete();
+
     ed::End();
     ed::SetCurrentEditor(nullptr);
 
