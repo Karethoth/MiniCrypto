@@ -5,6 +5,6 @@ namespace minicrypto
   enum NodeType
   {
     Default,
-    InputLine
+    TextInput
   };
 }

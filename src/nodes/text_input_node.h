@@ -6,13 +6,13 @@
 
 namespace minicrypto
 {
-  class InputLineNode : public NodeInfo
+  class TextInputNode : public NodeInfo
   {
    protected:
     std::array<char, 1024> text_buffer;
 
    public:
-    InputLineNode();
+    TextInputNode();
 
     void update() override;
   };

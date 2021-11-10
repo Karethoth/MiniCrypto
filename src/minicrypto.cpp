@@ -2,7 +2,7 @@
 
 #include "global.h"
 #include "nodes/node.h"
-#include "nodes/input_line_node.h"
+#include "nodes/text_input_node.h"
 #include "nodes/link.h"
 
 #include <vector>
@@ -98,7 +98,7 @@ int main(int, char**)
   nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
   nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
   nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
-  nodes.push_back(std::make_unique<minicrypto::InputLineNode>());
+  nodes.push_back(std::make_unique<minicrypto::TextInputNode>());
 
   std::vector<minicrypto::LinkInfo> links{};
 
@@ -142,7 +142,7 @@ int main(int, char**)
       ed::PinId input_pin_id, output_pin_id;
       if (ed::QueryNewLink(&input_pin_id, &output_pin_id))
       {
-        if (input_pin_id && output_pin_id) // both are valid, let's accept link
+        if (input_pin_id && output_pin_id)
         {
           if (ed::AcceptNewItem())
           {
@@ -191,6 +191,7 @@ int main(int, char**)
     //glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound
     ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(Global::sdl_window);
+
   }
 
   // Cleanup
