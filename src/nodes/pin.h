@@ -10,7 +10,7 @@ namespace minicrypto
 {
   class PinInfo
   {
-    ax::NodeEditor::PinId id = imgui_resource_id_counter++;
+    ax::NodeEditor::PinId id;
     ax::NodeEditor::PinKind type;
     std::string text;
 

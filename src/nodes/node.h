@@ -8,7 +8,7 @@ namespace minicrypto
 {
   class NodeInfo
   {
-    ax::NodeEditor::NodeId id = imgui_resource_id_counter++;
+    ax::NodeEditor::NodeId id;
     std::vector<PinInfo> pins;
 
    public:

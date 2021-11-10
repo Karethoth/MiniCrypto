@@ -1,6 +1,11 @@
 #include "pin.h"
 
-minicrypto::PinInfo::PinInfo(const ax::NodeEditor::PinKind type, std::string text) : type(type)
+minicrypto::PinInfo::PinInfo(
+  const ax::NodeEditor::PinKind type,
+  std::string text
+)
+: id(Global::imgui_resource_id_counter++),
+ type(type)
 {
   if (text.empty())
   {
@@ -13,7 +18,7 @@ minicrypto::PinInfo::PinInfo(const ax::NodeEditor::PinKind type, std::string tex
   this->text = text;
 }
 
-ax::NodeEditor::PinId   minicrypto::PinInfo::get_id() const
+ax::NodeEditor::PinId minicrypto::PinInfo::get_id() const
 {
   return id;
 }

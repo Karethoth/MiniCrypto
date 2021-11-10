@@ -4,7 +4,7 @@ minicrypto::LinkInfo::LinkInfo(
   ax::NodeEditor::PinId input_id,
   ax::NodeEditor::PinId output_id
 )
-: id(imgui_resource_id_counter++),
+: id(Global::imgui_resource_id_counter++),
   input_id(input_id),
   output_id(output_id)
 {}
