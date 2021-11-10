@@ -2,9 +2,12 @@
 
 #include "global.h"
 #include "nodes/node.h"
+#include "nodes/input_line_node.h"
 #include "nodes/link.h"
 
 #include <vector>
+#include <memory>
+
 #include <imgui.h>
 #include <backends/imgui_impl_sdl.h>
 #include <backends/imgui_impl_opengl2.h>
@@ -91,10 +94,11 @@ int main(int, char**)
     return pins;
   };
 
-  std::vector<minicrypto::NodeInfo> nodes{};
-  nodes.emplace_back(generate_basic_pins());
-  nodes.emplace_back(generate_basic_pins());
-  nodes.emplace_back(generate_basic_pins());
+  std::vector<std::unique_ptr<minicrypto::NodeInfo>> nodes{};
+  nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
+  nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
+  nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
+  nodes.push_back(std::make_unique<minicrypto::InputLineNode>());
 
   std::vector<minicrypto::LinkInfo> links{};
 
@@ -125,7 +129,7 @@ int main(int, char**)
 
     for (auto &node : nodes)
     {
-      node.update();
+      node->update();
     }
 
     for (auto &link : links)

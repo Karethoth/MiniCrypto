@@ -34,7 +34,6 @@ TEST_CASE("Hex to byte conversion", "[hex_to_byte_string]")
   REQUIRE(hex_to_byte_string("410041") == byte_string{"\x41\x00\x41"s});
 }
 
-
 TEST_CASE("Byte to Hex conversion", "[byte_to_hex_string]")
 {
   REQUIRE(byte_to_hex_string("") == hex_string{""});

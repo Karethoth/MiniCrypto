@@ -54,3 +54,15 @@ void minicrypto::NodeInfo::draw_pins()
   }
   ImGui::EndGroup();
 }
+
+ax::NodeEditor::NodeId minicrypto::NodeInfo::get_id() const
+{
+  return id;
+}
+
+minicrypto::NodeType minicrypto::NodeInfo::get_type() const
+{
+  return type;
+}
+
+

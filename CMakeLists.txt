@@ -19,6 +19,7 @@ set (PROJECT_SOURCES
   "src/minicrypto.cpp"
   "src/utils.cpp"
   "src/nodes/node.cpp"
+  "src/nodes/input_line_node.cpp"
   "src/nodes/pin.cpp"
   "src/nodes/link.cpp"
 )

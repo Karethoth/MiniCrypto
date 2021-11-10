@@ -20,7 +20,8 @@ namespace minicrypto
     NodeInfo(std::vector<PinInfo> pins={});
 
     NodeType get_type() const;
-    void update();
-    void draw_pins();
+    ax::NodeEditor::NodeId get_id() const;
+    virtual void update();
+    virtual void draw_pins();
   };
 }
