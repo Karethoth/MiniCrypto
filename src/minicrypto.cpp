@@ -1,5 +1,6 @@
 #include "MiniCrypto.h"
 
+#include <vector>
 #include <imgui.h>
 #include <backends/imgui_impl_sdl.h>
 #include <backends/imgui_impl_opengl2.h>
@@ -7,22 +8,11 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-#include "../3rdparty/imgui-node-editor/imgui_node_editor.h"
+#include "nodes/node.h"
 
 namespace ed = ax::NodeEditor;
 
 static ed::EditorContext* g_Context = nullptr;
-
-void Application_Finalize()
-{
-}
-
-void Application_Frame()
-{
-	//ImGui::ShowMetricsWindow();
-}
-
-
 
 int main(int, char**)
 {
@@ -59,13 +49,24 @@ int main(int, char**)
   ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
   ImGui_ImplOpenGL2_Init();
 
-  bool show_demo_window = true;
-  bool show_another_window = true;
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
   ed::Config config;
   config.SettingsFile = "Simple.json";
   g_Context = ed::CreateEditor(&config);
+
+
+  auto generate_basic_pins = [] {
+    std::vector<minicrypto::PinInfo> pins{};
+    pins.emplace_back(ax::NodeEditor::PinKind::Input);
+    pins.emplace_back(ax::NodeEditor::PinKind::Output);
+    return pins;
+  };
+
+  std::vector<minicrypto::NodeInfo> nodes{};
+  nodes.emplace_back(generate_basic_pins());
+  nodes.emplace_back(generate_basic_pins());
+  nodes.emplace_back(generate_basic_pins());
 
   bool done = false;
   while (!done)
@@ -93,16 +94,10 @@ int main(int, char**)
     ed::Begin("My Editor", ImVec2(0.0, 0.0f));
     int uniqueId = 1;
     // Start drawing nodes.
-    ed::BeginNode(uniqueId++);
-        ImGui::Text("Node A");
-        ed::BeginPin(uniqueId++, ed::PinKind::Input);
-            ImGui::Text("-> In");
-        ed::EndPin();
-        ImGui::SameLine();
-        ed::BeginPin(uniqueId++, ed::PinKind::Output);
-            ImGui::Text("Out ->");
-        ed::EndPin();
-    ed::EndNode();
+    for(auto& node : nodes)
+    {
+      node.update();
+    }
     ed::End();
     ed::SetCurrentEditor(nullptr);
 

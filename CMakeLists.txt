@@ -15,8 +15,11 @@ include_directories(
 )
 
 set (PROJECT_SOURCES
+  "src/global.cpp"
   "src/minicrypto.cpp"
   "src/utils.cpp"
+  "src/nodes/node.cpp"
+  "src/nodes/pin.cpp"
 )
 
 set (IMGUI_SOURCES
