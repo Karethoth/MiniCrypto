@@ -4,7 +4,8 @@
 
 
 minicrypto::NodeInfo::NodeInfo(std::vector<PinInfo> pins)
-: id(Global::imgui_resource_id_counter++),
+: type(NodeType::Default),
+  id(Global::imgui_resource_id_counter++),
   pins(pins)
 {
   // Order pins by type and id for nice rendering
@@ -28,7 +29,12 @@ void minicrypto::NodeInfo::update()
 {
   ax::NodeEditor::BeginNode(id);
   ImGui::Text("Node");
+  draw_pins();
+  ax::NodeEditor::EndNode();
+}
 
+void minicrypto::NodeInfo::draw_pins()
+{
   bool printing_in_pins = true;
 
   ImGui::BeginGroup();
@@ -47,5 +53,4 @@ void minicrypto::NodeInfo::update()
     ax::NodeEditor::EndPin();
   }
   ImGui::EndGroup();
-  ax::NodeEditor::EndNode();
 }
