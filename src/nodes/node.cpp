@@ -8,13 +8,12 @@ void minicrypto::NodeInfo::update()
 {
   ax::NodeEditor::BeginNode(id);
     ImGui::Text("Node");
+    // TODO: Have every other pin switch between an input and an output.
+    // This would allow using ImGui::Sameline between them
     for (auto &pin : pins)
     {
       ax::NodeEditor::BeginPin(pin.get_id(), pin.get_type());
-      if (pin.get_type() == ax::NodeEditor::PinKind::Input)
-        ImGui::Text("-> in");
-      else
-        ImGui::Text("out ->");
+      ImGui::Text(pin.get_text().c_str());
       ax::NodeEditor::EndPin();
     }
   ax::NodeEditor::EndNode();

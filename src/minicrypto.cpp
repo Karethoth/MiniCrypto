@@ -58,8 +58,8 @@ int main(int, char**)
 
   auto generate_basic_pins = [] {
     std::vector<minicrypto::PinInfo> pins{};
-    pins.emplace_back(ax::NodeEditor::PinKind::Input);
-    pins.emplace_back(ax::NodeEditor::PinKind::Output);
+    pins.emplace_back(ax::NodeEditor::PinKind::Input, "-> input");
+    pins.emplace_back(ax::NodeEditor::PinKind::Output, "output ->");
     return pins;
   };
 

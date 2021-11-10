@@ -13,6 +13,7 @@ namespace minicrypto
 
    public:
     NodeInfo(std::vector<PinInfo> pins={});
+
     void update();
   };
 }
