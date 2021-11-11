@@ -3,21 +3,18 @@
 #include "../events/events.h"
 #include "node.h"
 
-#include <functional>
-
 namespace minicrypto
 {
-  class TextInputNode : public NodeInfo
+  class DataTransformNode : public NodeInfo
   {
    protected:
-    size_t      text_buffer_size = 1024;
-    std::string text_buffer;
+    std::string data_buffer;
 
     // TODO: Use std::map with unique keys so that detaching an event handler can be done easily
     std::vector<DataChangedEventHandler> event_handlers;
 
    public:
-    TextInputNode();
+    DataTransformNode();
 
     void update() override;
     std::string get_string() const;
