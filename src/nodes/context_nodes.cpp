@@ -53,10 +53,73 @@ bool minicrypto::ContextNodes::has_link(ax::NodeEditor::LinkId link_id) const
 
 bool minicrypto::ContextNodes::accept_link(LinkInfo link)
 {
-  // Accept all links for now
-  ax::NodeEditor::AcceptNewItem();
+  std::optional<NodeInfo> input_node;
+  std::optional<NodeInfo> output_node;
+  std::optional<PinInfo> input_pin;
+  std::optional<PinInfo> output_pin;
 
-  this->link(link);
+  for (const auto& node : nodes)
+  {
+    const auto tmp_input_pin  = node->get_pin(link.get_input_id());
+    const auto tmp_output_pin = node->get_pin(link.get_output_id());
+
+    if (tmp_input_pin.has_value())
+    {
+      input_node = *node;
+      input_pin = tmp_input_pin;
+    }
+
+    if (tmp_output_pin.has_value())
+    {
+      output_node = *node;
+      output_pin = tmp_output_pin;
+    }
+  }
+
+  if (!input_node.has_value() ||
+      !output_node.has_value())
+  {
+    return false;
+  }
+
+  // Prevent links within the same node
+  if (input_node->get_id() == output_node->get_id())
+  {
+    return false;
+  }
+
+  // Prevent links between pins of the same type
+  if (input_pin->get_type() == output_pin->get_type())
+  {
+    return false;
+  }
+
+  // Make sure the pins match their type
+  // - Depending on which way the link is created they may be flipped
+  if (input_pin->get_type() == ax::NodeEditor::PinKind::Output)
+  {
+    auto tmp_pin  = input_pin;
+    auto tmp_node = input_node;
+
+    input_pin  = output_pin;
+    input_node = output_node;
+
+    output_pin  = tmp_pin;
+    output_node = tmp_node;
+  }
+
+  // Make sure the input pin hasn't already been connected
+  for (const auto& existing_link : links)
+  {
+    if (existing_link.get_input_id() == input_pin->get_id())
+    {
+      return false;
+    }
+  }
+
+  // TODO: Have both nodes accept the link
+
+  this->link({input_pin->get_id(), output_pin->get_id()});
   return true;
 }
 
@@ -68,7 +131,6 @@ bool minicrypto::ContextNodes::remove_link(ax::NodeEditor::LinkId link_id)
   }
 
   // Accept all removes for now
-
   auto link = links.begin();
   while (link != links.end())
   {

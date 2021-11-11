@@ -139,7 +139,7 @@ int main(int, char**)
       ed::PinId input_pin_id, output_pin_id;
       if (ed::QueryNewLink(&input_pin_id, &output_pin_id))
       {
-        if (input_pin_id && output_pin_id)
+        if (input_pin_id && output_pin_id && ed::AcceptNewItem())
         {
           if (context_nodes.has_pin(input_pin_id) &&
               context_nodes.has_pin(output_pin_id))

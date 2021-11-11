@@ -17,6 +17,8 @@ namespace minicrypto
     LinkInfo(ax::NodeEditor::PinId input_id, ax::NodeEditor::PinId output_id);
 
     ax::NodeEditor::LinkId get_id() const;
+    ax::NodeEditor::PinId get_input_id() const;
+    ax::NodeEditor::PinId get_output_id() const;
     void register_link() const;
   };
 }

@@ -14,6 +14,16 @@ ax::NodeEditor::LinkId minicrypto::LinkInfo::get_id() const
   return id;
 }
 
+ax::NodeEditor::PinId minicrypto::LinkInfo::get_input_id() const
+{
+  return input_id;
+}
+
+ax::NodeEditor::PinId minicrypto::LinkInfo::get_output_id() const
+{
+  return output_id;
+}
+
 void minicrypto::LinkInfo::register_link() const
 {
   ax::NodeEditor::Link(id, input_id, output_id);
