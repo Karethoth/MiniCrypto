@@ -5,6 +5,7 @@
 #include "pin.h"
 
 #include <vector>
+#include <optional>
 
 namespace minicrypto
 {
@@ -21,6 +22,8 @@ namespace minicrypto
 
     NodeType get_type() const;
     ax::NodeEditor::NodeId get_id() const;
+    std::optional<PinInfo> get_pin(const ax::NodeEditor::PinId pin_id) const;
+
     virtual void update();
     virtual void draw_pins();
   };

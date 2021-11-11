@@ -65,4 +65,20 @@ minicrypto::NodeType minicrypto::NodeInfo::get_type() const
   return type;
 }
 
+std::optional<minicrypto::PinInfo> minicrypto::NodeInfo::get_pin(const ax::NodeEditor::PinId pin_id) const
+{
+  std::optional<minicrypto::PinInfo> result{};
+
+  for (const auto& pin : pins)
+  {
+    if (pin.get_id() == pin_id)
+    {
+      result = pin;
+      break;
+    }
+  }
+
+  return result;
+}
+
 
