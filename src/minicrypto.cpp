@@ -4,6 +4,7 @@
 #include "nodes/node.h"
 #include "nodes/text_input_node.h"
 #include "nodes/link.h"
+#include "nodes/context_nodes.h"
 
 #include <vector>
 #include <memory>
@@ -94,18 +95,17 @@ int main(int, char**)
     return pins;
   };
 
-  std::vector<std::unique_ptr<minicrypto::NodeInfo>> nodes{};
-  nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
-  nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
-  nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
+
+  minicrypto::ContextNodes context_nodes{};
+  context_nodes.add(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
+  context_nodes.add(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
+  context_nodes.add(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
 
   auto text_input_node = std::make_unique<minicrypto::TextInputNode>();
   text_input_node->add_event_handler([](const minicrypto::DataChangedEvent &e) {
     std::cout << "Text changed to '" + e.data + "'" << std::endl;
   });
-  nodes.push_back(std::move(text_input_node));
-
-  std::vector<minicrypto::LinkInfo> links{};
+  context_nodes.add(std::move(text_input_node));
 
   bool done = false;
   while (!done)
@@ -132,15 +132,7 @@ int main(int, char**)
     ed::Begin("My Editor", ImVec2(0.0, 0.0f));
     int uniqueId = 1;
 
-    for (auto &node : nodes)
-    {
-      node->update();
-    }
-
-    for (auto &link : links)
-    {
-      link.register_link();
-    }
+    context_nodes.update();
 
     if (ed::BeginCreate())
     {
@@ -149,10 +141,17 @@ int main(int, char**)
       {
         if (input_pin_id && output_pin_id)
         {
-          if (ed::AcceptNewItem())
+          if (context_nodes.has_pin(input_pin_id) &&
+              context_nodes.has_pin(output_pin_id))
           {
-            links.emplace_back(input_pin_id, output_pin_id);
-            links.back().register_link();
+            if (!context_nodes.accept_link({input_pin_id, output_pin_id}))
+            {
+              ed::RejectNewItem();
+            }
+          }
+          else
+          {
+            ed::RejectNewItem();
           }
         }
       }
@@ -164,21 +163,16 @@ int main(int, char**)
       ed::LinkId deleted_link_id;
       while (ed::QueryDeletedLink(&deleted_link_id))
       {
-        if (ed::AcceptDeletedItem())
+        if (context_nodes.has_link(deleted_link_id))
         {
-          auto link = std::begin(links);
-          while (link != links.end())
+          if (!context_nodes.remove_link(deleted_link_id))
           {
-            if (link->get_id() == deleted_link_id)
-            {
-              links.erase(link);
-              break;
-            }
-            else
-            {
-              ++link;
-            }
+            ed::RejectDeletedItem();
           }
+        }
+        else
+        {
+          ed::RejectDeletedItem();
         }
       }
     }
