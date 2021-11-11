@@ -24,6 +24,9 @@ void minicrypto::TextInputNode::update()
     // Might get expensive. Consider using reference to the text_buffer if the buffer sizes grow large.
     e.data = text_buffer;
 
+    // Remove any excess data. Think of the string as if it's an usual C-string
+    e.data.resize(std::strlen(e.data.c_str()));
+
     for (auto &event_handler : event_handlers)
     {
       event_handler(e);
