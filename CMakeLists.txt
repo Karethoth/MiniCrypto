@@ -22,6 +22,7 @@ set (PROJECT_SOURCES
   "src/nodes/text_input_node.cpp"
   "src/nodes/pin.cpp"
   "src/nodes/link.cpp"
+  "src/nodes/context_nodes.cpp"
 )
 
 set (IMGUI_SOURCES
