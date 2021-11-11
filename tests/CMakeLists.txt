@@ -10,7 +10,7 @@ if(NOT Catch2_POPULATED)
   FetchContent_MakeAvailable(Catch2)
 endif()
 
-include(../CMakeFiles/config.cmake)
+include(../cmake_helpers/config.cmake)
 
 # Tests
 enable_testing()

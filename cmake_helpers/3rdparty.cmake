@@ -14,4 +14,4 @@ endif ()
 
 find_package(SDL2 REQUIRED)
 
-include(CMakeFiles/imgui.cmake)
+include(cmake_helpers/imgui.cmake)

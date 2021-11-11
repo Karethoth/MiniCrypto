@@ -98,7 +98,12 @@ int main(int, char**)
   nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
   nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
   nodes.push_back(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
-  nodes.push_back(std::make_unique<minicrypto::TextInputNode>());
+
+  auto text_input_node = std::make_unique<minicrypto::TextInputNode>();
+  text_input_node->add_event_handler([](const minicrypto::DataChangedEvent &e) {
+    std::cout << "Text changed to '" + e.data + "'" << std::endl;
+  });
+  nodes.push_back(std::move(text_input_node));
 
   std::vector<minicrypto::LinkInfo> links{};
 

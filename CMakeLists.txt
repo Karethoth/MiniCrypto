@@ -5,8 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("minicrypto")
 
-include(CMakeFiles/3rdparty.cmake)
-include(CMakeFiles/config.cmake)
+include(cmake_helpers/3rdparty.cmake)
+include(cmake_helpers/config.cmake)
 
 include_directories(
   ${OPENGL_INCLUDE_DIR}
