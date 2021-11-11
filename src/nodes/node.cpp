@@ -82,3 +82,7 @@ std::optional<minicrypto::PinInfo> minicrypto::NodeInfo::get_pin(const ax::NodeE
 }
 
 
+bool minicrypto::NodeInfo::handle_input_changed_event(minicrypto::DataChangedEvent e)
+{
+  return true;
+}

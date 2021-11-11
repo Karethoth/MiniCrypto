@@ -13,7 +13,7 @@ namespace minicrypto
   // Has ownership of all the nodes given to it.
   class ContextNodes
   {
-    std::vector<std::unique_ptr<NodeInfo>> nodes{};
+    std::vector<std::shared_ptr<NodeInfo>> nodes{};
     std::vector<LinkInfo> links{};
 
     // Performs the linking operation. Also registers the link for the current frame.

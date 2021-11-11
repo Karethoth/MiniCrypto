@@ -24,6 +24,7 @@ set (PROJECT_SOURCES
   "src/nodes/pin.cpp"
   "src/nodes/link.cpp"
   "src/nodes/context_nodes.cpp"
+  "src/events/events.cpp"
 )
 
 set (IMGUI_SOURCES

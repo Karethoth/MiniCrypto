@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global.h"
+#include "../events/events.h"
 #include "node_type.h"
 #include "pin.h"
 
@@ -26,5 +27,7 @@ namespace minicrypto
 
     virtual void update();
     virtual void draw_pins();
+
+    virtual bool handle_input_changed_event(DataChangedEvent e);
   };
 }

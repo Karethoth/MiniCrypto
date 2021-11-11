@@ -23,5 +23,7 @@ namespace minicrypto
     void add_event_handler(DataChangedEventHandler event_handler);
 
     // TODO: Add remove function which uses the key returned by add_event_handler
+
+    bool handle_input_changed_event(DataChangedEvent e) override;
   };
 }
