@@ -1,5 +1,7 @@
 #include "text_input_node.h"
 
+#include <cstring>
+
 minicrypto::TextInputNode::TextInputNode()
 : minicrypto::NodeInfo()
 {

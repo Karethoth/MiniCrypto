@@ -9,8 +9,8 @@ include(cmake_helpers/3rdparty.cmake)
 include(cmake_helpers/config.cmake)
 
 include_directories(
-  ${OPENGL_INCLUDE_DIR}
-  ${SDL2_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIRS}
+  ${SDL2_INCLUDE_DIRS}
   ${IMGUI_INCLUDE_DIR}
 )
 

@@ -8,9 +8,10 @@ add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
 
 include_directories(
     ${IMGUI_INCLUDE_DIR}
-    ${OPENGL_INCLUDE_DIR}
-    ${SDL2_INCLUDE_DIR})
-    
+    ${OPENGL_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIRS}
+)
+
 target_link_libraries(imgui
     ${OPENGL_LIBRARIES}
     ${SDL2_LIBRARIES})

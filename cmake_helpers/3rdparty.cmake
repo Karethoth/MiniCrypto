@@ -9,7 +9,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Linux)
     message(FATAL_ERROR "X11 Xi library is required")
   endif ()
 else()
-  set(SDL2_DIR 3rdparty)
+  set(SDL2_DIR .)
 endif ()
 
 find_package(SDL2 REQUIRED)

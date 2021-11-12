@@ -1,10 +1,9 @@
 #pragma once
 
 #include "../global.h"
+#include "../../3rdparty/imgui-node-editor/imgui_node_editor.h"
 
 #include <string>
-#include <imgui.h>
-#include "../../3rdparty/imgui-node-editor/imgui_node_editor.h"
 
 namespace minicrypto
 {

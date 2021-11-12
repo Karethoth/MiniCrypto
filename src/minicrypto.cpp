@@ -1,4 +1,4 @@
-#include "MiniCrypto.h"
+#include "minicrypto.h"
 
 #include "global.h"
 #include "nodes/node.h"
@@ -13,8 +13,6 @@
 #include <backends/imgui_impl_sdl.h>
 #include <backends/imgui_impl_opengl2.h>
 #include <stdio.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
 
 namespace ed = ax::NodeEditor;
 using minicrypto::Global;

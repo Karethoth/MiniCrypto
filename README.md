@@ -32,4 +32,10 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
   - Hit `Ctrl+F5`
 
 ## Linux
-- *TODO*
+- Install SDL2 development libraries
+- Run `./install-dependencies-linux.sh` to populate `3rdparty/imgui` and `3rdparty/imgui-node-editor`
+- Basic CMake process
+  - `mkdir build && cd build && cmake .. && make`
+  - You can run the tests with `make test`
+    - For more verbose output you can run
+      - `./tests/tests -s`

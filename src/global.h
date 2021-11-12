@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL.h>
+#include "sdl2.h"
 
 namespace minicrypto
 {
