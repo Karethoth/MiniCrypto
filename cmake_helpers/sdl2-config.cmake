@@ -9,4 +9,4 @@ IF (WIN32)
 	endif ()
 
 	string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
-ENDIF
+ENDIF()
