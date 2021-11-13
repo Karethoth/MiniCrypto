@@ -53,5 +53,19 @@ target_link_libraries(minicrypto
   ${IMGUI_LIBRARIES}
 )
 
+# SDL2.dll for Windows
+if (WIN32)
+  if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(SDL2_LIB_DIR "x64")
+  else()
+    set(SDL2_LIB_DIR "x86")
+  endif()
+
+  add_custom_command(TARGET minicrypto POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib/${SDL2_LIB_DIR}/SDL2.dll"
+    $<TARGET_FILE_DIR:minicrypto>/SDL2.dll)
+endif()
+
 include(CTest)
 add_subdirectory(tests)

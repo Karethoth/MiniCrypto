@@ -15,13 +15,9 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 - Having git bash, cygwin, WSL or something to run `wget`, `git` and `bash` is required.
 - Run `./install-dependencies-win.sh`
 
-### Notes
-- Bug in imgui-node-editor after ImGui update:
-  - Possible error message: `..\3rdparty\imgui-node-editor\imgui_canvas.cpp(104): error C2660: 'ImGui::IsClippedEx': function does not take 3 arguments`
-  - Fix: Open the `imgui_canvas.cpp` file and remove the third argument from the mentioned line.
-
 ### Development Environment
-- Tested with VS Code with the following extensions:
+#### VS Code
+- Extensions:
   - C/C++
   - CMake
   - CMake Tools
@@ -29,7 +25,13 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
   - Open the project folder in VS Code
   - Hit `Ctrl+Shift+P` and run "`CMake: Configure`"
   - If asked to select a kit, pick the compiler you want to use
-  - Hit `Ctrl+F5`
+  - Hit `Ctrl+F5` and select the target
+
+#### Visual Studio 2022 Preview
+- Open the directory as a local folder in VS2022
+- Wait for `CMake generation finished.` message in the `Output` tab
+- From the top bar, using the arrow next to `Select Startup Item` pick `minicrypto.exe`
+- Hit `Ctrl+F5`
 
 ## Linux
 - Install SDL2 development libraries
@@ -39,3 +41,9 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
   - You can run the tests with `make test`
     - For more verbose output you can run
       - `./tests/tests -s`
+
+# Notes
+- Bug in imgui-node-editor after ImGui update:
+  - Possible error message: `..\3rdparty\imgui-node-editor\imgui_canvas.cpp(104): error C2660: 'ImGui::IsClippedEx': function does not take 3 arguments`
+  - Fix: Open the `imgui_canvas.cpp` file and remove the third argument from the mentioned line.
+
