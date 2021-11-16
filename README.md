@@ -7,7 +7,7 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 - C++17 Compiler
 - CMake
 - [ImGui](https://github.com/ocornut/imgui)
-- [imgui-node-editor](https://github.com/thedmd/imgui-node-editor)
+- [ImNodes](https://github.com/Nelarius/imnodes)
 - [SDL2](https://www.libsdl.org)
 
 ## Windows
@@ -35,15 +35,10 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 
 ## Linux
 - Install SDL2 development libraries
-- Run `./install-dependencies-linux.sh` to populate `3rdparty/imgui` and `3rdparty/imgui-node-editor`
+- Run `./install-dependencies-linux.sh` to populate `3rdparty/imgui` and `3rdparty/imnodes`
 - Basic CMake process
   - `mkdir build && cd build && cmake .. && make`
   - You can run the tests with `make test`
     - For more verbose output you can run
       - `./tests/tests -s`
-
-# Notes
-- Bug in imgui-node-editor after ImGui update:
-  - Possible error message: `..\3rdparty\imgui-node-editor\imgui_canvas.cpp(104): error C2660: 'ImGui::IsClippedEx': function does not take 3 arguments`
-  - Fix: Open the `imgui_canvas.cpp` file and remove the third argument from the mentioned line.
 
