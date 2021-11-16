@@ -21,20 +21,21 @@ namespace minicrypto
 
    public:
     void add(std::unique_ptr<NodeInfo> node);
-    void remove(ax::NodeEditor::NodeId node_id);
+    void remove(NodeId node_id);
 
     // Returns true if pin belongs to this context
-    bool has_pin(ax::NodeEditor::PinId pin_id) const;
+    bool has_pin(PinId pin_id) const;
 
     // Returns true if link belongs to this context
-    bool has_link(ax::NodeEditor::LinkId link_id) const;
+    bool has_link(LinkId link_id) const;
 
     // Returns true and performs linking if the context can accept the link
     bool accept_link(LinkInfo link);
 
     // Returns true and removes the link if the context can remove the link
-    bool remove_link(ax::NodeEditor::LinkId link_id);
+    bool remove_link(LinkId link_id);
 
     void update();
   };
 }
+

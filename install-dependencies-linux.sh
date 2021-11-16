@@ -12,5 +12,6 @@ rm -rf 3rdparty/imgui-node-editor
 # IMGUI
 git clone --depth=1 https://github.com/ocornut/imgui 3rdparty/imgui
 
-# Node editor
-git clone --depth=1 https://github.com/thedmd/imgui-node-editor 3rdparty/imgui-node-editor
+# ImNodes
+git clone --depth=1 https://github.com/Nelarius/imnodes 3rdparty/imnodes
+

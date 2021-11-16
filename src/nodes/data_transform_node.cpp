@@ -6,20 +6,22 @@ minicrypto::DataTransformNode::DataTransformNode()
 {
   type = NodeType::DataTransform;
   pins = std::vector<minicrypto::PinInfo>{};
-  pins.emplace_back(ax::NodeEditor::PinKind::Input);
-  pins.emplace_back(ax::NodeEditor::PinKind::Output);
+  pins.emplace_back(minicrypto::PinKind::Input);
+  pins.emplace_back(minicrypto::PinKind::Output);
   data_buffer.clear();
 }
 
 void minicrypto::DataTransformNode::update()
 {
-  ax::NodeEditor::BeginNode(get_id());
-  ImGui::Text("Transform");
+  ImNodes::BeginNode(get_id());
+  ImNodes::BeginNodeTitleBar();
+  ImGui::TextUnformatted("Transform");
+  ImNodes::EndNodeTitleBar();
 
   // TODO: Have a dropdown menu or something to select the transformation type
 
   draw_pins();
-  ax::NodeEditor::EndNode();
+  ImNodes::EndNode();
 }
 
 void minicrypto::DataTransformNode::add_event_handler(DataChangedEventHandler event_handler)
@@ -46,3 +48,4 @@ bool minicrypto::DataTransformNode::handle_input_changed_event(minicrypto::DataC
 
   return true;
 }
+

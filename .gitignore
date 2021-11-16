@@ -3,6 +3,4 @@
 build
 out
 _deps
-3rdparty/SDL2
-3rdparty/imgui-node-editor
-3rdparty/imgui
+3rdparty

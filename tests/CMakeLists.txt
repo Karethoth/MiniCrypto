@@ -21,3 +21,4 @@ set_property(TARGET tests PROPERTY CXX_STANDARD 17)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
 add_test(run_tests tests)
+

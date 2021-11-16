@@ -1,24 +1,26 @@
 #pragma once
 
 #include "../global.h"
+#include "types.h"
 
 #include <imgui.h>
-#include "../../3rdparty/imgui-node-editor/imgui_node_editor.h"
+#include "../../3rdparty/imnodes/imnodes.h"
 
 namespace minicrypto
 {
   class LinkInfo
   {
-    ax::NodeEditor::LinkId id;
-    ax::NodeEditor::PinId  input_id;
-    ax::NodeEditor::PinId  output_id;
+    LinkId id;
+    PinId  input_id;
+    PinId  output_id;
 
    public:
-    LinkInfo(ax::NodeEditor::PinId input_id, ax::NodeEditor::PinId output_id);
+    LinkInfo(PinId input_id, PinId output_id);
 
-    ax::NodeEditor::LinkId get_id() const;
-    ax::NodeEditor::PinId get_input_id() const;
-    ax::NodeEditor::PinId get_output_id() const;
-    void register_link() const;
+    LinkId get_id() const;
+    PinId  get_input_id() const;
+    PinId  get_output_id() const;
+    void   register_link() const;
   };
 }
+

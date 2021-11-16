@@ -12,7 +12,7 @@ namespace minicrypto
 {
   class NodeInfo
   {
-    ax::NodeEditor::NodeId id;
+    NodeId id;
 
    protected:
     NodeType type;
@@ -22,8 +22,8 @@ namespace minicrypto
     NodeInfo(std::vector<PinInfo> pins={});
 
     NodeType get_type() const;
-    ax::NodeEditor::NodeId get_id() const;
-    std::optional<PinInfo> get_pin(const ax::NodeEditor::PinId pin_id) const;
+    NodeId get_id() const;
+    std::optional<PinInfo> get_pin(const PinId pin_id) const;
 
     virtual void update();
     virtual void draw_pins();
@@ -31,3 +31,4 @@ namespace minicrypto
     virtual bool handle_input_changed_event(DataChangedEvent e);
   };
 }
+

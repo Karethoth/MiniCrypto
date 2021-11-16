@@ -28,3 +28,4 @@ namespace minicrypto
     // TODO: Add remove function which uses the key returned by add_event_handler
   };
 }
+

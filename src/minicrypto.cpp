@@ -14,7 +14,6 @@
 #include <backends/imgui_impl_opengl2.h>
 #include <stdio.h>
 
-namespace ed = ax::NodeEditor;
 using minicrypto::Global;
 
 int init_sdl()
@@ -79,17 +78,16 @@ int main(int, char**)
 
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-  ed::Config config;
-  config.SettingsFile = "Simple.json";
-  ed::EditorContext* editor_context = ed::CreateEditor(&config);
+  const auto imnodes_context = ImNodes::CreateContext();
+  ImNodes::StyleColorsDark();
 
   auto generate_basic_pins = [] {
     std::vector<minicrypto::PinInfo> pins{};
-    pins.emplace_back(ax::NodeEditor::PinKind::Input, "-> in #1");
-    pins.emplace_back(ax::NodeEditor::PinKind::Input, "-> in #2");
-    pins.emplace_back(ax::NodeEditor::PinKind::Output, "#1 out ->");
-    pins.emplace_back(ax::NodeEditor::PinKind::Output, "#2 out ->");
-    pins.emplace_back(ax::NodeEditor::PinKind::Input, "-> in #3");
+    pins.emplace_back(minicrypto::PinKind::Input, "-> in #1");
+    pins.emplace_back(minicrypto::PinKind::Input, "-> in #2");
+    pins.emplace_back(minicrypto::PinKind::Output, "#1 out ->");
+    pins.emplace_back(minicrypto::PinKind::Output, "#2 out ->");
+    pins.emplace_back(minicrypto::PinKind::Input, "-> in #3");
     return pins;
   };
 
@@ -124,60 +122,49 @@ int main(int, char**)
     ImGui::NewFrame();
 
     auto& io = ImGui::GetIO();
-    ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
-    ImGui::Separator();
-    ed::SetCurrentEditor(editor_context);
-    ed::Begin("My Editor", ImVec2(0.0, 0.0f));
-    int uniqueId = 1;
+
+    ImGui::Begin("Editor");
+	ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
+
+    ImNodes::SetCurrentContext(imnodes_context);
+    ImNodes::BeginNodeEditor();
+    ImNodes::PushAttributeFlag(ImNodesAttributeFlags_EnableLinkDetachWithDragClick);
 
     context_nodes.update();
 
-    if (ed::BeginCreate())
+    ImNodes::PopAttributeFlag();
+    ImNodes::EndNodeEditor();
+    ImGui::End();
+
+    minicrypto::PinId input_pin_id, output_pin_id;
+    if (ImNodes::IsLinkCreated(&input_pin_id, &output_pin_id))
     {
-      ed::PinId input_pin_id, output_pin_id;
-      if (ed::QueryNewLink(&input_pin_id, &output_pin_id))
+      if (input_pin_id && output_pin_id)
       {
-        if (input_pin_id && output_pin_id && ed::AcceptNewItem())
+        if (context_nodes.has_pin(input_pin_id) &&
+          context_nodes.has_pin(output_pin_id))
         {
-          if (context_nodes.has_pin(input_pin_id) &&
-              context_nodes.has_pin(output_pin_id))
+          if (!context_nodes.accept_link({input_pin_id, output_pin_id}))
           {
-            if (!context_nodes.accept_link({input_pin_id, output_pin_id}))
-            {
-              ed::RejectNewItem();
-            }
-          }
-          else
-          {
-            ed::RejectNewItem();
+              // Link wasn't accepted for some reason
           }
         }
       }
     }
-    ed::EndCreate();
 
-    if (ed::BeginDelete())
+    minicrypto::LinkId deleted_link_id;
+    if (ImNodes::IsLinkDestroyed(&deleted_link_id))
     {
-      ed::LinkId deleted_link_id;
-      while (ed::QueryDeletedLink(&deleted_link_id))
+      if (context_nodes.has_link(deleted_link_id))
       {
-        if (context_nodes.has_link(deleted_link_id))
+        if (!context_nodes.remove_link(deleted_link_id))
         {
-          if (!context_nodes.remove_link(deleted_link_id))
-          {
-            ed::RejectDeletedItem();
-          }
-        }
-        else
-        {
-          ed::RejectDeletedItem();
+            // Link wasn't removed for some reason
         }
       }
     }
-    ed::EndDelete();
 
-    ed::End();
-    ed::SetCurrentEditor(nullptr);
+    ImNodes::SetCurrentContext(nullptr);
 
     // Rendering
     ImGui::Render();
@@ -192,8 +179,10 @@ int main(int, char**)
   }
 
   // Cleanup
-  ed::DestroyEditor(editor_context);
+  //ImNodes::EditorContextFree(editor_context);
+  ImNodes::DestroyContext(imnodes_context);
 
   cleanup();
   return 0;
 }
+

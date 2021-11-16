@@ -7,17 +7,15 @@ minicrypto::TextInputNode::TextInputNode()
 {
   type = NodeType::TextInput;
   pins = std::vector<minicrypto::PinInfo>{};
-  pins.emplace_back(ax::NodeEditor::PinKind::Output);
+  pins.emplace_back(PinKind::Output);
   text_buffer.resize(text_buffer_size);
 }
 
 void minicrypto::TextInputNode::update()
 {
-  ax::NodeEditor::BeginNode(get_id());
+  ImNodes::BeginNode(get_id());
   ImGui::Text("Text Input");
 
-  // Due to canvas coordinates vs screen cordinates, the text can show up in totally wrong place.
-  // TODO: Fix.
   if (ImGui::InputTextMultiline("", text_buffer.data(), text_buffer.size(), ImVec2(400, 100)))
   {
     // Text changed, call the event handlers
@@ -35,10 +33,21 @@ void minicrypto::TextInputNode::update()
     }
   }
   draw_pins();
-  ax::NodeEditor::EndNode();
+  ImNodes::EndNode();
 }
 
 void minicrypto::TextInputNode::add_event_handler(DataChangedEventHandler event_handler)
 {
   event_handlers.push_back(event_handler);
 }
+
+std::string minicrypto::TextInputNode::get_string() const
+{
+    // Might get expensive. Consider using reference to the text_buffer if the buffer sizes grow large.
+    std::string str = text_buffer;
+
+    // Remove any excess data. Think of the string as if it's an usual C-string
+    str.resize(std::strlen(str.c_str()));
+    return str;
+}
+

@@ -11,8 +11,8 @@ namespace minicrypto
   struct DataChangedEvent
   {
     NodeType source_node_type;
-    ax::NodeEditor::PinId source_pin;
-    ax::NodeEditor::PinId local_pin;
+    PinId source_pin;
+    PinId local_pin;
     std::string data;
 
     DataChangedEvent();
@@ -20,3 +20,4 @@ namespace minicrypto
 
   using DataChangedEventHandler = std::function<void(const DataChangedEvent&)>;
 }
+

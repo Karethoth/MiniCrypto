@@ -8,3 +8,4 @@ namespace minicrypto
   using byte_string   = std::string;
   using base64_string = std::string;
 }
+

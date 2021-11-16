@@ -11,3 +11,4 @@ namespace minicrypto
     static SDL_GLContext gl_context;
   };
 }
+

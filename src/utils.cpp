@@ -120,3 +120,4 @@ base64_string minicrypto::byte_to_base64_string(const byte_string &input)
 
   return result;
 }
+

@@ -27,3 +27,4 @@ namespace minicrypto
     bool handle_input_changed_event(DataChangedEvent e) override;
   };
 }
+

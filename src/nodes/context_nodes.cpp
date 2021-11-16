@@ -3,7 +3,6 @@
 void minicrypto::ContextNodes::link(LinkInfo link)
 {
   links.push_back(link);
-  link.register_link();
 }
 
 void minicrypto::ContextNodes::add(std::unique_ptr<NodeInfo> node)
@@ -11,7 +10,7 @@ void minicrypto::ContextNodes::add(std::unique_ptr<NodeInfo> node)
   nodes.push_back(std::move(node));
 }
 
-void minicrypto::ContextNodes::remove(ax::NodeEditor::NodeId node_id)
+void minicrypto::ContextNodes::remove(NodeId node_id)
 {
   auto node = nodes.begin();
   while (node != nodes.end())
@@ -26,7 +25,7 @@ void minicrypto::ContextNodes::remove(ax::NodeEditor::NodeId node_id)
   }
 }
 
-bool minicrypto::ContextNodes::has_pin(ax::NodeEditor::PinId pin_id) const
+bool minicrypto::ContextNodes::has_pin(PinId pin_id) const
 {
   for (const auto& node : nodes)
   {
@@ -39,7 +38,7 @@ bool minicrypto::ContextNodes::has_pin(ax::NodeEditor::PinId pin_id) const
   return false;
 }
 
-bool minicrypto::ContextNodes::has_link(ax::NodeEditor::LinkId link_id) const
+bool minicrypto::ContextNodes::has_link(LinkId link_id) const
 {
   for (const auto& link : links)
   {
@@ -96,7 +95,7 @@ bool minicrypto::ContextNodes::accept_link(LinkInfo link)
 
   // Make sure the pins match their type
   // - Depending on which way the link is created they may be flipped
-  if (input_pin->get_type() == ax::NodeEditor::PinKind::Output)
+  if (input_pin->get_type() == PinKind::Output)
   {
     auto tmp_pin  = input_pin;
     auto tmp_node = input_node;
@@ -123,7 +122,7 @@ bool minicrypto::ContextNodes::accept_link(LinkInfo link)
   return true;
 }
 
-bool minicrypto::ContextNodes::remove_link(ax::NodeEditor::LinkId link_id)
+bool minicrypto::ContextNodes::remove_link(LinkId link_id)
 {
   if (!has_link(link_id))
   {
@@ -137,7 +136,6 @@ bool minicrypto::ContextNodes::remove_link(ax::NodeEditor::LinkId link_id)
     if (link->get_id() == link_id)
     {
       link = links.erase(link);
-      ax::NodeEditor::AcceptDeletedItem();
       return true;
     }
 
@@ -158,3 +156,4 @@ void minicrypto::ContextNodes::update()
     link.register_link();
   }
 }
+

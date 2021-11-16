@@ -32,17 +32,14 @@ set (IMGUI_SOURCES
   "3rdparty/imgui/backends/imgui_impl_opengl2.cpp"
 )
 
-set (IMGUI_NODE_EDITOR_SOURCES
-  "3rdparty/imgui-node-editor/crude_json.cpp"
-  "3rdparty/imgui-node-editor/imgui_node_editor_api.cpp"
-  "3rdparty/imgui-node-editor/imgui_node_editor.cpp"
-  "3rdparty/imgui-node-editor/imgui_canvas.cpp"
+set (IMNODES_SOURCES
+  "3rdparty/imnodes/imnodes.cpp"
 )
 
 add_executable (minicrypto
   ${PROJECT_SOURCES}
   ${IMGUI_SOURCES}
-  ${IMGUI_NODE_EDITOR_SOURCES}
+  ${IMNODES_SOURCES}
 )
 
 set_property(TARGET minicrypto PROPERTY CXX_STANDARD 17)

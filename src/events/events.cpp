@@ -8,3 +8,4 @@ minicrypto::DataChangedEvent::DataChangedEvent()
   data{}
 {
 }
+

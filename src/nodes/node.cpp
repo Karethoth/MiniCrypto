@@ -18,19 +18,19 @@ minicrypto::NodeInfo::NodeInfo(std::vector<PinInfo> pins)
     const auto type_b = b.get_type();
     if (type_a == type_b)
     {
-      return a.get_id().Get() < b.get_id().Get();
+      return a.get_id() < b.get_id();
     }
 
-    return type_a == ax::NodeEditor::PinKind::Input;
+    return type_a == minicrypto::PinKind::Input;
   });
 }
 
 void minicrypto::NodeInfo::update()
 {
-  ax::NodeEditor::BeginNode(id);
+  ImNodes::BeginNode(id);
   ImGui::Text("Node");
   draw_pins();
-  ax::NodeEditor::EndNode();
+  ImNodes::EndNode();
 }
 
 void minicrypto::NodeInfo::draw_pins()
@@ -40,22 +40,30 @@ void minicrypto::NodeInfo::draw_pins()
   ImGui::BeginGroup();
   for (auto &pin : pins)
   {
-    if (printing_in_pins && pin.get_type() == ax::NodeEditor::PinKind::Output)
+    if (pin.get_type() == minicrypto::PinKind::Input)
     {
-      printing_in_pins = false;
-      ImGui::EndGroup();
-      ImGui::SameLine();
-      ImGui::BeginGroup();
+      ImNodes::BeginInputAttribute(pin.get_id());
+      ImGui::TextUnformatted(pin.get_text().c_str());
+      ImNodes::EndInputAttribute();
     }
-
-    ax::NodeEditor::BeginPin(pin.get_id(), pin.get_type());
-    ImGui::Text(pin.get_text().c_str());
-    ax::NodeEditor::EndPin();
+    else
+    {
+      if (printing_in_pins)
+      {
+        printing_in_pins = false;
+	    ImGui::EndGroup();
+	    ImGui::SameLine();
+        ImGui::BeginGroup();
+      }
+      ImNodes::BeginOutputAttribute(pin.get_id());
+      ImGui::TextUnformatted(pin.get_text().c_str());
+      ImNodes::EndOutputAttribute();
+    }
   }
   ImGui::EndGroup();
 }
 
-ax::NodeEditor::NodeId minicrypto::NodeInfo::get_id() const
+minicrypto::NodeId minicrypto::NodeInfo::get_id() const
 {
   return id;
 }
@@ -65,7 +73,7 @@ minicrypto::NodeType minicrypto::NodeInfo::get_type() const
   return type;
 }
 
-std::optional<minicrypto::PinInfo> minicrypto::NodeInfo::get_pin(const ax::NodeEditor::PinId pin_id) const
+std::optional<minicrypto::PinInfo> minicrypto::NodeInfo::get_pin(const minicrypto::PinId pin_id) const
 {
   std::optional<minicrypto::PinInfo> result{};
 
@@ -86,3 +94,4 @@ bool minicrypto::NodeInfo::handle_input_changed_event(minicrypto::DataChangedEve
 {
   return true;
 }
+
