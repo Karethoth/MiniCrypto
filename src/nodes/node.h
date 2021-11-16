@@ -18,6 +18,9 @@ namespace minicrypto
     NodeType type;
     std::vector<PinInfo> pins;
 
+    // TODO: Use std::map with unique keys so that detaching an event handler can be done easily
+    std::vector<DataChangedEventListener> event_listeners;
+
    public:
     NodeInfo(std::vector<PinInfo> pins={});
 
@@ -28,7 +31,12 @@ namespace minicrypto
     virtual void update();
     virtual void draw_pins();
 
-    virtual bool handle_input_changed_event(DataChangedEvent e);
+    virtual bool handle_input_changed_event(PinId pin_id, const DataChangedEvent& e);
+
+    // TODO: When using std::map to store the event_listeners, should return the key
+    void add_output_changed_event_listener(DataChangedEventListener event_listener);
+
+    // TODO: Add remove function which uses the key returned by add_event_handler
   };
 }
 

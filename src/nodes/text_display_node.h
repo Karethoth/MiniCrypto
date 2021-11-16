@@ -3,21 +3,20 @@
 #include "../events/events.h"
 #include "node.h"
 
-#include <functional>
-
 namespace minicrypto
 {
-  class TextInputNode : public NodeInfo
+  class TextDisplayNode : public NodeInfo
   {
    protected:
-    size_t      text_buffer_size = 1024;
     std::string text_buffer;
 
    public:
-    TextInputNode();
+    TextDisplayNode();
 
     void update() override;
     std::string get_string() const;
+
+    bool handle_input_changed_event(PinId pin_id, const DataChangedEvent& e) override;
   };
 }
 

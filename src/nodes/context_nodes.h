@@ -30,7 +30,7 @@ namespace minicrypto
     bool has_link(LinkId link_id) const;
 
     // Returns true and performs linking if the context can accept the link
-    bool accept_link(LinkInfo link);
+    bool accept_link(const PinId input_pin_id, const PinId output_pin_id);
 
     // Returns true and removes the link if the context can remove the link
     bool remove_link(LinkId link_id);

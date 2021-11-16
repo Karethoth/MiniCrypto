@@ -89,9 +89,14 @@ std::optional<minicrypto::PinInfo> minicrypto::NodeInfo::get_pin(const minicrypt
   return result;
 }
 
-
-bool minicrypto::NodeInfo::handle_input_changed_event(minicrypto::DataChangedEvent e)
+bool minicrypto::NodeInfo::handle_input_changed_event(minicrypto::PinId pin_id, const minicrypto::DataChangedEvent &e)
 {
-  return true;
+  throw std::exception("Not implemented: handle_input_changed_event");
+  return false;
+}
+
+void minicrypto::NodeInfo::add_output_changed_event_listener(minicrypto::DataChangedEventListener event_listener)
+{
+  event_listeners.push_back(event_listener);
 }
 

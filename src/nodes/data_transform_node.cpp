@@ -24,12 +24,7 @@ void minicrypto::DataTransformNode::update()
   ImNodes::EndNode();
 }
 
-void minicrypto::DataTransformNode::add_event_handler(DataChangedEventHandler event_handler)
-{
-  event_handlers.push_back(event_handler);
-}
-
-bool minicrypto::DataTransformNode::handle_input_changed_event(minicrypto::DataChangedEvent e)
+bool minicrypto::DataTransformNode::handle_input_changed_event(PinId pin_id, const minicrypto::DataChangedEvent &e)
 {
   // Single input so perform the operation and trigger the data changed event listeners
 
@@ -40,10 +35,10 @@ bool minicrypto::DataTransformNode::handle_input_changed_event(minicrypto::DataC
   new_event.source_node_type = this->type;
   new_event.data = data_buffer;
 
-  // Trigger handlers
-  for (auto& event_handler : event_handlers)
+  // Trigger listeners
+  for (auto& event_listener : event_listeners)
   {
-    event_handler(new_event);
+    event_listener(new_event);
   }
 
   return true;

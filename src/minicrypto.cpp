@@ -3,6 +3,7 @@
 #include "global.h"
 #include "nodes/node.h"
 #include "nodes/text_input_node.h"
+#include "nodes/text_display_node.h"
 #include "nodes/link.h"
 #include "nodes/context_nodes.h"
 
@@ -98,10 +99,10 @@ int main(int, char**)
   context_nodes.add(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
 
   auto text_input_node = std::make_unique<minicrypto::TextInputNode>();
-  text_input_node->add_event_handler([](const minicrypto::DataChangedEvent &e) {
-    std::cout << "Text changed to '" + e.data + "'" << std::endl;
-  });
   context_nodes.add(std::move(text_input_node));
+
+  auto text_display_node = std::make_unique<minicrypto::TextDisplayNode>();
+  context_nodes.add(std::move(text_display_node));
 
   bool done = false;
   while (!done)
@@ -144,7 +145,7 @@ int main(int, char**)
         if (context_nodes.has_pin(input_pin_id) &&
           context_nodes.has_pin(output_pin_id))
         {
-          if (!context_nodes.accept_link({input_pin_id, output_pin_id}))
+          if (!context_nodes.accept_link(input_pin_id, output_pin_id))
           {
               // Link wasn't accepted for some reason
           }

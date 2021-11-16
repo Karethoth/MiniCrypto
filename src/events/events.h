@@ -12,12 +12,11 @@ namespace minicrypto
   {
     NodeType source_node_type;
     PinId source_pin;
-    PinId local_pin;
     std::string data;
 
     DataChangedEvent();
   };
 
-  using DataChangedEventHandler = std::function<void(const DataChangedEvent&)>;
+  using DataChangedEventListener = std::function<void(const DataChangedEvent&)>;
 }
 

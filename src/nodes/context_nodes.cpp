@@ -2,6 +2,7 @@
 
 void minicrypto::ContextNodes::link(LinkInfo link)
 {
+  link.connect_data();
   links.push_back(link);
 }
 
@@ -50,27 +51,29 @@ bool minicrypto::ContextNodes::has_link(LinkId link_id) const
   return false;
 }
 
-bool minicrypto::ContextNodes::accept_link(LinkInfo link)
+bool minicrypto::ContextNodes::accept_link(
+  const minicrypto::PinId input_pin_id,
+  const minicrypto::PinId output_pin_id)
 {
-  std::optional<NodeInfo> input_node;
-  std::optional<NodeInfo> output_node;
+  std::optional<NodeInfo*> input_node;
+  std::optional<NodeInfo*> output_node;
   std::optional<PinInfo> input_pin;
   std::optional<PinInfo> output_pin;
 
   for (const auto& node : nodes)
   {
-    const auto tmp_input_pin  = node->get_pin(link.get_input_id());
-    const auto tmp_output_pin = node->get_pin(link.get_output_id());
+    const auto tmp_input_pin  = node->get_pin(input_pin_id);
+    const auto tmp_output_pin = node->get_pin(output_pin_id);
 
     if (tmp_input_pin.has_value())
     {
-      input_node = *node;
+      input_node = node.get();
       input_pin = tmp_input_pin;
     }
 
     if (tmp_output_pin.has_value())
     {
-      output_node = *node;
+      output_node = node.get();
       output_pin = tmp_output_pin;
     }
   }
@@ -82,7 +85,7 @@ bool minicrypto::ContextNodes::accept_link(LinkInfo link)
   }
 
   // Prevent links within the same node
-  if (input_node->get_id() == output_node->get_id())
+  if (input_node.value()->get_id() == output_node.value()->get_id())
   {
     return false;
   }
@@ -110,7 +113,7 @@ bool minicrypto::ContextNodes::accept_link(LinkInfo link)
   // Make sure the input pin hasn't already been connected
   for (const auto& existing_link : links)
   {
-    if (existing_link.get_input_id() == input_pin->get_id())
+    if (existing_link.get_input_pin_id() == input_pin->get_id())
     {
       return false;
     }
@@ -118,7 +121,12 @@ bool minicrypto::ContextNodes::accept_link(LinkInfo link)
 
   // TODO: Have both nodes accept the link
 
-  this->link({input_pin->get_id(), output_pin->get_id()});
+  this->link({
+    input_node.value(),
+    output_node.value(),
+    input_pin->get_id(),
+    output_pin->get_id()
+  });
   return true;
 }
 

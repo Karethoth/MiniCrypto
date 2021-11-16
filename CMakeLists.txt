@@ -20,6 +20,7 @@ set (PROJECT_SOURCES
   "src/utils.cpp"
   "src/nodes/node.cpp"
   "src/nodes/text_input_node.cpp"
+  "src/nodes/text_display_node.cpp"
   "src/nodes/data_transform_node.cpp"
   "src/nodes/pin.cpp"
   "src/nodes/link.cpp"

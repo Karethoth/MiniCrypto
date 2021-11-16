@@ -1,22 +1,21 @@
-#include "text_input_node.h"
+#include "text_display_node.h"
 
 #include <cstring>
 
-minicrypto::TextInputNode::TextInputNode()
+minicrypto::TextDisplayNode::TextDisplayNode()
 : minicrypto::NodeInfo()
 {
   type = NodeType::TextInput;
   pins = std::vector<minicrypto::PinInfo>{};
-  pins.emplace_back(PinKind::Output);
-  text_buffer.resize(text_buffer_size);
+  pins.emplace_back(PinKind::Input);
 }
 
-void minicrypto::TextInputNode::update()
+void minicrypto::TextDisplayNode::update()
 {
   ImNodes::BeginNode(get_id());
-  ImGui::Text("Text Input");
+  ImGui::Text("Text Display");
 
-  if (ImGui::InputTextMultiline("", text_buffer.data(), text_buffer.size(), ImVec2(400, 100)))
+  if (ImGui::InputTextMultiline("", text_buffer.data(), text_buffer.size(), ImVec2(400, 100), ImGuiInputTextFlags_ReadOnly))
   {
     // Text changed, call the event handlers
     DataChangedEvent e{};
@@ -26,7 +25,7 @@ void minicrypto::TextInputNode::update()
     e.source_pin = pins.begin()->get_id();
 
     // Might get expensive. Consider using reference to the text_buffer if the buffer sizes grow large.
-    e.data = get_string();
+    e.data = text_buffer;
 
     // Remove any excess data. Think of the string as if it's an usual C-string
     e.data.resize(std::strlen(e.data.c_str()));
@@ -40,7 +39,7 @@ void minicrypto::TextInputNode::update()
   ImNodes::EndNode();
 }
 
-std::string minicrypto::TextInputNode::get_string() const
+std::string minicrypto::TextDisplayNode::get_string() const
 {
     // Might get expensive. Consider using reference to the text_buffer if the buffer sizes grow large.
     std::string str = text_buffer;
@@ -48,5 +47,11 @@ std::string minicrypto::TextInputNode::get_string() const
     // Remove any excess data. Think of the string as if it's an usual C-string
     str.resize(std::strlen(str.c_str()));
     return str;
+}
+
+bool minicrypto::TextDisplayNode::handle_input_changed_event(PinId pin_id, const DataChangedEvent &e)
+{
+  text_buffer = e.data;
+  return true;
 }
 
