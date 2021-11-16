@@ -4,6 +4,7 @@
 #include "nodes/node.h"
 #include "nodes/text_input_node.h"
 #include "nodes/text_display_node.h"
+#include "nodes/data_transform_node.h"
 #include "nodes/link.h"
 #include "nodes/context_nodes.h"
 
@@ -103,6 +104,9 @@ int main(int, char**)
 
   auto text_display_node = std::make_unique<minicrypto::TextDisplayNode>();
   context_nodes.add(std::move(text_display_node));
+
+  auto data_transform_node = std::make_unique<minicrypto::DataTransformNode>();
+  context_nodes.add(std::move(data_transform_node));
 
   bool done = false;
   while (!done)

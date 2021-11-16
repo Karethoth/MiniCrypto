@@ -7,6 +7,10 @@ namespace minicrypto
 {
   class DataTransformNode : public NodeInfo
   {
+   private:
+    PinId input_pin_id;
+    PinId output_pin_id;
+
    protected:
     std::string data_buffer;
 
