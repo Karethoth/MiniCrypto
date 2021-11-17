@@ -141,7 +141,12 @@ int main(int, char**)
     ImGui::SetNextWindowPos(window_pos);
     ImGui::SetNextWindowSize(window_size);
 
-    ImGui::Begin("##MiniCrypto", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin(
+      "##MiniCrypto", nullptr,
+      ImGuiWindowFlags_NoResize |
+      ImGuiWindowFlags_NoTitleBar |
+      ImGuiWindowFlags_NoSavedSettings
+    );
 
     ImGui::Columns(3);
     ImGui::SetColumnOffset(1, 200);
