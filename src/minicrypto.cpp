@@ -35,7 +35,7 @@ int init_sdl()
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   SDL_DisplayMode current;
   SDL_GetCurrentDisplayMode(0, &current);
-  SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+  SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
   Global::sdl_window = SDL_CreateWindow("MiniCrypto", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
   SDL_GLContext gl_context = SDL_GL_CreateContext(Global::sdl_window);
   SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -49,6 +49,8 @@ void init_imgui()
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO(); (void)io;
   //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+  //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+  //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
@@ -128,8 +130,27 @@ int main(int, char**)
 
     auto& io = ImGui::GetIO();
 
-    ImGui::Begin("Editor");
-	ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
+
+    ImVec2 window_pos{ 0, 0 };
+    ImVec2 window_size
+    {
+      io.DisplaySize.x,
+      io.DisplaySize.y
+    };
+
+    ImGui::SetNextWindowPos(window_pos);
+    ImGui::SetNextWindowSize(window_size);
+
+    ImGui::Begin("##MiniCrypto", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings);
+
+    ImGui::Columns(3);
+    ImGui::SetColumnOffset(1, 200);
+    ImGui::SetColumnOffset(2, window_size.x - 200);
+
+    ImGui::Text("Workspaces");
+    ImGui::NextColumn();
+    ImGui::Spacing();
+    ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
 
     ImNodes::SetCurrentContext(imnodes_context);
     ImNodes::BeginNodeEditor();
@@ -139,7 +160,12 @@ int main(int, char**)
 
     ImNodes::PopAttributeFlag();
     ImNodes::EndNodeEditor();
+
+    ImGui::NextColumn();
+    ImGui::Text("Node menu");
+
     ImGui::End();
+
 
     minicrypto::PinId input_pin_id, output_pin_id;
     if (ImNodes::IsLinkCreated(&input_pin_id, &output_pin_id))
@@ -169,10 +195,9 @@ int main(int, char**)
       }
     }
 
-    ImNodes::SetCurrentContext(nullptr);
-
     // Rendering
     ImGui::Render();
+
     glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -181,10 +206,19 @@ int main(int, char**)
     ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(Global::sdl_window);
 
+    /*
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+      SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+      SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+      ImGui::UpdatePlatformWindows();
+      ImGui::RenderPlatformWindowsDefault();
+      SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+    }
+    */
   }
 
   // Cleanup
-  //ImNodes::EditorContextFree(editor_context);
   ImNodes::DestroyContext(imnodes_context);
 
   cleanup();

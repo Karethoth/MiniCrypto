@@ -7,7 +7,7 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 - C++17 Compiler
 - CMake
 - [ImGui](https://github.com/ocornut/imgui)
-- [ImNodes](https://github.com/Nelarius/imnodes)
+- [imnodes](https://github.com/Nelarius/imnodes)
 - [SDL2](https://www.libsdl.org)
 
 ## Windows
