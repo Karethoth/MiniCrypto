@@ -51,6 +51,7 @@ void minicrypto::DataTransformNode::update()
     selected_option_name = selected_option->name.c_str();
   }
 
+  ImGui::PushItemWidth(120);
   if (ImGui::BeginCombo("##combo", selected_option_name))
   {
     for (auto& option : transform_options)
@@ -59,6 +60,7 @@ void minicrypto::DataTransformNode::update()
       {
         selected_option = &option;
         ImGui::SetItemDefaultFocus();
+        // TODO: Trigger connected output nodes to send out new DataChangedEvents
       }
       else if (selected_option != &option && option.is_selected)
       {
@@ -67,6 +69,7 @@ void minicrypto::DataTransformNode::update()
     }
     ImGui::EndCombo();
   }
+  ImGui::PopItemWidth();
 
   if (!error_msg.empty())
   {

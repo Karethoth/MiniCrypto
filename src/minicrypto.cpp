@@ -95,20 +95,7 @@ int main(int, char**)
     return pins;
   };
 
-
   minicrypto::ContextNodes context_nodes{};
-  context_nodes.add(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
-  context_nodes.add(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
-  context_nodes.add(std::make_unique<minicrypto::NodeInfo>(generate_basic_pins()));
-
-  auto text_input_node = std::make_unique<minicrypto::TextInputNode>();
-  context_nodes.add(std::move(text_input_node));
-
-  auto text_display_node = std::make_unique<minicrypto::TextDisplayNode>();
-  context_nodes.add(std::move(text_display_node));
-
-  auto data_transform_node = std::make_unique<minicrypto::DataTransformNode>();
-  context_nodes.add(std::move(data_transform_node));
 
   bool done = false;
   while (!done)
@@ -167,7 +154,24 @@ int main(int, char**)
     ImNodes::EndNodeEditor();
 
     ImGui::NextColumn();
-    ImGui::Text("Node menu");
+    ImGui::Text("Add Nodes");
+    if (ImGui::Button("Transform Node", ImVec2{ 200, 30 }))
+    {
+      auto node = std::make_unique<minicrypto::DataTransformNode>();
+      context_nodes.add(std::move(node));
+    }
+
+    if (ImGui::Button("Text Input Node", ImVec2{ 200, 30 }))
+    {
+      auto node = std::make_unique<minicrypto::TextInputNode>();
+      context_nodes.add(std::move(node));
+    }
+
+    if (ImGui::Button("Text Display Node", ImVec2{ 200, 30 }))
+    {
+      auto node = std::make_unique<minicrypto::TextDisplayNode>();
+      context_nodes.add(std::move(node));
+    }
 
     ImGui::End();
 
