@@ -85,16 +85,6 @@ int main(int, char**)
   const auto imnodes_context = ImNodes::CreateContext();
   ImNodes::StyleColorsDark();
 
-  auto generate_basic_pins = [] {
-    std::vector<minicrypto::PinInfo> pins{};
-    pins.emplace_back(minicrypto::PinKind::Input, "-> in #1");
-    pins.emplace_back(minicrypto::PinKind::Input, "-> in #2");
-    pins.emplace_back(minicrypto::PinKind::Output, "#1 out ->");
-    pins.emplace_back(minicrypto::PinKind::Output, "#2 out ->");
-    pins.emplace_back(minicrypto::PinKind::Input, "-> in #3");
-    return pins;
-  };
-
   minicrypto::ContextNodes context_nodes{};
 
   bool done = false;
