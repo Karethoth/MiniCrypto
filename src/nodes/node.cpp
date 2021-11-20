@@ -1,12 +1,14 @@
 #include "node.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 
-minicrypto::NodeInfo::NodeInfo(std::vector<PinInfo> pins)
+minicrypto::NodeInfo::NodeInfo(std::vector<PinInfo> pins, int node_width)
 : type(NodeType::Default),
   id(Global::imgui_resource_id_counter++),
-  pins(pins)
+  pins(pins),
+  node_width(node_width)
 {
   // Order pins by type and id for nice rendering
   std::sort(
@@ -43,7 +45,10 @@ void minicrypto::NodeInfo::draw_pins()
     if (pin.get_type() == minicrypto::PinKind::Input)
     {
       ImNodes::BeginInputAttribute(pin.get_id());
+      const float label_width = ImGui::CalcTextSize(pin.get_text().c_str()).x;
+      ImGui::PushItemWidth(node_width - label_width);
       ImGui::TextUnformatted(pin.get_text().c_str());
+      ImGui::PopItemWidth();
       ImNodes::EndInputAttribute();
     }
     else
@@ -52,11 +57,21 @@ void minicrypto::NodeInfo::draw_pins()
       {
         printing_in_pins = false;
         ImGui::EndGroup();
-        ImGui::SameLine();
+
+        // In case this node doesn't have any inputs
+        if (&pin != &(*pins.begin()))
+        {
+          ImGui::SameLine();
+        }
         ImGui::BeginGroup();
       }
+
+
       ImNodes::BeginOutputAttribute(pin.get_id());
+      const float label_width = ImGui::CalcTextSize(pin.get_text().c_str()).x;
+      ImGui::PushItemWidth(node_width - label_width);
       ImGui::TextUnformatted(pin.get_text().c_str());
+      ImGui::PopItemWidth();
       ImNodes::EndOutputAttribute();
     }
   }
@@ -91,7 +106,7 @@ std::optional<minicrypto::PinInfo> minicrypto::NodeInfo::get_pin(const minicrypt
 
 bool minicrypto::NodeInfo::handle_input_changed_event(minicrypto::PinId pin_id, const minicrypto::DataChangedEvent &e)
 {
-  throw std::exception("Not implemented: handle_input_changed_event");
+  throw std::runtime_error("Not implemented: handle_input_changed_event");
   return false;
 }
 
