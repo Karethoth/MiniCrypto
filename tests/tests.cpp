@@ -49,7 +49,10 @@ TEST_CASE("Byte to Hex conversion", "[byte_to_hex_string]")
 
 TEST_CASE("Bytes to base64 conversion", "[byte_to_base64_string]")
 {
-  REQUIRE(byte_to_base64_string("Many hands make light work.") == base64_string{"TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu"});
+  REQUIRE(
+    byte_to_base64_string("Many hands make light work.") ==
+    base64_string{"TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu"}
+  );
   REQUIRE(byte_to_base64_string("light work.") == base64_string{"bGlnaHQgd29yay4="});
   REQUIRE(byte_to_base64_string("light work") == base64_string{"bGlnaHQgd29yaw=="});
   REQUIRE(byte_to_base64_string("light wor") == base64_string{"bGlnaHQgd29y"});
@@ -64,3 +67,4 @@ TEST_CASE("Hex to base64 conversion", "[hex_to_base64_string]")
 
   REQUIRE(set_1_challenge_1_base64 == "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t");
 }
+

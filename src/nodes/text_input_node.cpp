@@ -16,7 +16,12 @@ void minicrypto::TextInputNode::update()
   ImNodes::BeginNode(get_id());
   ImGui::Text("Text Input");
 
-  if (ImGui::InputTextMultiline("", text_buffer.data(), text_buffer.size(), ImVec2(400, 100)))
+  if (ImGui::InputTextMultiline(
+    "",
+    text_buffer.data(),
+    text_buffer.size(),
+    ImVec2(400, 100)
+  ))
   {
     // Text changed, call the event handlers
     DataChangedEvent e{};

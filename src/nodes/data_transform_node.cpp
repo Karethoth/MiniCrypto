@@ -80,7 +80,10 @@ void minicrypto::DataTransformNode::update()
   ImNodes::EndNode();
 }
 
-bool minicrypto::DataTransformNode::handle_input_changed_event(PinId pin_id, const minicrypto::DataChangedEvent& e)
+bool minicrypto::DataTransformNode::handle_input_changed_event(
+  PinId pin_id,
+  const minicrypto::DataChangedEvent& e
+)
 {
   // Single input so perform the operation and trigger the data changed event listeners
 
