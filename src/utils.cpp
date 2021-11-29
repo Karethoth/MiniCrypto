@@ -17,7 +17,9 @@ uint8_t minicrypto::hexchar_to_nibble(uint8_t c)
     return c - '0';
   }
 
-  throw std::out_of_range("hexchar_to_nibble(): Input was not within range Aa-Zz|0-9!");
+  throw std::out_of_range(
+    "hexchar_to_nibble(): Input was not within range Aa-Zz|0-9!"
+  );
 }
 
 byte_string minicrypto::hex_to_byte_string(const hex_string &input)
@@ -27,7 +29,9 @@ byte_string minicrypto::hex_to_byte_string(const hex_string &input)
   // Verify string length is an even number, 2 or above
   if (input.size() % 2 != 0 || input.size() <= 0)
   {
-    throw std::runtime_error("hex_to_byte_string(): Can't convert uneven number of characters to a byte string!");
+    throw std::runtime_error(
+      "hex_to_byte_string(): Can't convert uneven number of characters to a byte string!"
+    );
   }
 
   for (size_t i=0; i < input.size(); i += 2)

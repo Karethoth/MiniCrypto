@@ -15,7 +15,13 @@ void minicrypto::TextDisplayNode::update()
   ImNodes::BeginNode(get_id());
   ImGui::Text("Text Display");
 
-  if (ImGui::InputTextMultiline("", text_buffer.data(), text_buffer.size(), ImVec2(400, 100), ImGuiInputTextFlags_ReadOnly))
+  if (ImGui::InputTextMultiline(
+    "",
+    text_buffer.data(),
+    text_buffer.size(),
+    ImVec2(400, 100),
+    ImGuiInputTextFlags_ReadOnly
+  ))
   {
     // Text changed, call the event handlers
     DataChangedEvent e{};
@@ -49,7 +55,10 @@ std::string minicrypto::TextDisplayNode::get_string() const
     return str;
 }
 
-bool minicrypto::TextDisplayNode::handle_input_changed_event(PinId pin_id, const DataChangedEvent& e)
+bool minicrypto::TextDisplayNode::handle_input_changed_event(
+  PinId pin_id,
+  const DataChangedEvent& e
+)
 {
   text_buffer = e.data;
   return true;
