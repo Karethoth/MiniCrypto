@@ -9,6 +9,7 @@ minicrypto::TextInputNode::TextInputNode()
   pins = std::vector<minicrypto::PinInfo>{};
   pins.emplace_back(PinKind::Output);
   text_buffer.resize(text_buffer_size);
+  node_width = 100;
 }
 
 void minicrypto::TextInputNode::update()
@@ -16,6 +17,7 @@ void minicrypto::TextInputNode::update()
   ImNodes::BeginNode(get_id());
   ImGui::Text("Text Input");
 
+  ImGui::PushItemWidth(node_width);
   if (ImGui::InputTextMultiline(
     "",
     text_buffer.data(),
@@ -41,6 +43,7 @@ void minicrypto::TextInputNode::update()
       event_listener(e);
     }
   }
+  ImGui::PopItemWidth();
   draw_pins();
   ImNodes::EndNode();
 }

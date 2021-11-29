@@ -13,7 +13,7 @@ minicrypto::DataTransformOption::DataTransformOption(
 }
 
 minicrypto::DataTransformNode::DataTransformNode()
-: minicrypto::NodeInfo()
+: minicrypto::NodeInfo({}, 400)
 {
   type = NodeType::DataTransform;
   pins = std::vector<minicrypto::PinInfo>{};
