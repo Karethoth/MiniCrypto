@@ -13,7 +13,7 @@ minicrypto::DataTransformOption::DataTransformOption(
 }
 
 minicrypto::DataTransformNode::DataTransformNode()
-: minicrypto::NodeInfo({}, 400)
+: minicrypto::NodeInfo("Transform", {}, 400)
 {
   type = NodeType::DataTransform;
   pins = std::vector<minicrypto::PinInfo>{};
@@ -42,7 +42,7 @@ void minicrypto::DataTransformNode::update()
 {
   ImNodes::BeginNode(get_id());
   ImNodes::BeginNodeTitleBar();
-  ImGui::TextUnformatted("Transform");
+  ImGui::TextUnformatted(name.c_str());
   ImNodes::EndNodeTitleBar();
 
   const char* selected_option_name = "Select";

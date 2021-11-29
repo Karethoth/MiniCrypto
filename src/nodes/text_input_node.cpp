@@ -3,7 +3,7 @@
 #include <cstring>
 
 minicrypto::TextInputNode::TextInputNode()
-: minicrypto::NodeInfo()
+: minicrypto::NodeInfo("Text Input")
 {
   type = NodeType::TextInput;
   pins = std::vector<minicrypto::PinInfo>{};
@@ -15,7 +15,7 @@ minicrypto::TextInputNode::TextInputNode()
 void minicrypto::TextInputNode::update()
 {
   ImNodes::BeginNode(get_id());
-  ImGui::Text("Text Input");
+  ImGui::Text(name.c_str());
 
   ImGui::PushItemWidth(node_width);
   if (ImGui::InputTextMultiline(

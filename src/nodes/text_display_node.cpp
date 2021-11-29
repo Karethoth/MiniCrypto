@@ -3,7 +3,7 @@
 #include <cstring>
 
 minicrypto::TextDisplayNode::TextDisplayNode()
-: minicrypto::NodeInfo()
+: minicrypto::NodeInfo("Text Display")
 {
   type = NodeType::TextInput;
   pins = std::vector<minicrypto::PinInfo>{};
@@ -13,7 +13,7 @@ minicrypto::TextDisplayNode::TextDisplayNode()
 void minicrypto::TextDisplayNode::update()
 {
   ImNodes::BeginNode(get_id());
-  ImGui::Text("Text Display");
+  ImGui::Text(name.c_str());
 
   if (ImGui::InputTextMultiline(
     "",

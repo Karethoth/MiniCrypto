@@ -4,8 +4,9 @@
 #include <stdexcept>
 
 
-minicrypto::NodeInfo::NodeInfo(std::vector<PinInfo> pins, int node_width)
+minicrypto::NodeInfo::NodeInfo(std::string name, std::vector<PinInfo> pins, int node_width)
 : type(NodeType::Default),
+  name(name),
   id(Global::imgui_resource_id_counter++),
   pins(pins),
   node_width(node_width)
