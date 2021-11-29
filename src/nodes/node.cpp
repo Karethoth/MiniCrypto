@@ -57,16 +57,13 @@ void minicrypto::NodeInfo::draw_pins()
       {
         printing_in_pins = false;
         ImGui::EndGroup();
-        ImGui::SameLine(150);
-
         // In case this node doesn't have any inputs
         if (&pin != &(*pins.begin()))
         {
-          ImGui::SameLine();
+          ImGui::SameLine(150);
         }
         ImGui::BeginGroup();
       }
-
 
       ImNodes::BeginOutputAttribute(pin.get_id());
       const float label_width = ImGui::CalcTextSize(pin.get_text().c_str()).x;
