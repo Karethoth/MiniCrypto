@@ -143,6 +143,7 @@ bool minicrypto::ContextNodes::remove_link(LinkId link_id)
   {
     if (link->get_id() == link_id)
     {
+      // TODO: Remove the event listener from output_pin
       link = links.erase(link);
       return true;
     }

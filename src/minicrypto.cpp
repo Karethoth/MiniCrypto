@@ -147,6 +147,7 @@ int main(int, char**)
     ImNodes::SetCurrentContext(imnodes_context);
     ImNodes::BeginNodeEditor();
     ImNodes::PushAttributeFlag(ImNodesAttributeFlags_EnableLinkDetachWithDragClick);
+    ImNodes::PushAttributeFlag(ImNodesAttributeFlags_EnableLinkCreationOnSnap);
 
     context_nodes.update();
 

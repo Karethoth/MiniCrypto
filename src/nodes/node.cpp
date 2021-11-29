@@ -52,7 +52,7 @@ void minicrypto::NodeInfo::draw_pins()
       {
         printing_in_pins = false;
         ImGui::EndGroup();
-        ImGui::SameLine();
+        ImGui::SameLine(150);
         ImGui::BeginGroup();
       }
       ImNodes::BeginOutputAttribute(pin.get_id());
