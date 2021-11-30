@@ -5,7 +5,7 @@ minicrypto::PinInfo::PinInfo(
   std::string text
 )
 : id(Global::imgui_resource_id_counter++),
- type(type)
+  type(type)
 {
   if (text.empty())
   {

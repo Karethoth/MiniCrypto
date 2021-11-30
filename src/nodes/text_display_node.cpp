@@ -8,6 +8,8 @@ minicrypto::TextDisplayNode::TextDisplayNode()
   type = NodeType::TextInput;
   pins = std::vector<minicrypto::PinInfo>{};
   pins.emplace_back(PinKind::Input);
+
+  update_dimensions();
 }
 
 void minicrypto::TextDisplayNode::update()

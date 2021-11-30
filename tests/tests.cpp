@@ -62,7 +62,8 @@ TEST_CASE("Bytes to base64 conversion", "[byte_to_base64_string]")
 
 TEST_CASE("Hex to base64 conversion", "[hex_to_base64_string]")
 {
-  const auto set_1_challenge_1_bytes = hex_to_byte_string("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d");
+  const auto set_1_challenge_1_bytes = hex_to_byte_string(
+    "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d");
   const auto set_1_challenge_1_base64 = byte_to_base64_string(set_1_challenge_1_bytes);
 
   REQUIRE(set_1_challenge_1_base64 == "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t");

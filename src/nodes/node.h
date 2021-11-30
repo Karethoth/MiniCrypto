@@ -21,10 +21,22 @@ namespace minicrypto
 
     // TODO: Use std::map with unique keys so that detaching an event handler can be done easily
     std::vector<DataChangedEventListener> event_listeners;
-    int node_width;
+
+    ImVec2 node_size;
+    float max_label_width;
+    void update_dimensions();
+
+    float max_width_of_remining_pins(
+      std::vector<PinInfo>::const_iterator pin_it,
+      const std::vector<minicrypto::PinInfo>::const_iterator end
+    ) const;
 
    public:
-    NodeInfo(std::string name="Node", std::vector<PinInfo> pins = {}, int node_width = 200);
+    NodeInfo(
+      std::string name = "Node",
+      std::vector<PinInfo> pins = {},
+      ImVec2 node_size = { 200, 0 }
+    );
 
     NodeType get_type() const;
     NodeId get_id() const;
