@@ -22,3 +22,18 @@ std::vector<std::string> minicrypto::read_lines_from_file(const std::string& pat
   return lines;
 }
 
+std::string minicrypto::find_project_directory()
+{
+  auto cwd = std::filesystem::current_path();
+  while (cwd.has_parent_path())
+  {
+    if (std::filesystem::is_directory(cwd.u8string() + "/data"))
+    {
+      break;
+    }
+
+    cwd = cwd.parent_path();
+  }
+  return cwd.u8string();
+}
+

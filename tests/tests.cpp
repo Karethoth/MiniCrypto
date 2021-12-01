@@ -103,7 +103,7 @@ TEST_CASE("1-3: Single-byte XOR cipher", "[decrypt_single_char_xor]")
 TEST_CASE("1-4: Detect single-character XOR", "[decrypt_single_char_xor_from_file]")
 {
   // TODO: Add find parent directory with a file search and use that to find the absolute path
-  const auto lines = read_lines_from_file("../../../../data/1_4.txt");
+  const auto lines = read_lines_from_file(find_project_directory() + "/data/1_4.txt");
   ValueWithConfidence current_best{ "", 0 };
   for (const auto& line : lines)
   {
