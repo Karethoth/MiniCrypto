@@ -177,12 +177,12 @@ byte_string minicrypto::to_upper(byte_string input)
 size_t minicrypto::hamming_distance(uint8_t a, uint8_t b)
 {
   uint8_t diff = 0;
-  uint8_t xor  = a ^ b;
+  uint8_t xorred  = a ^ b;
 
-  while (xor)
+  while (xorred)
   {
-    diff += xor & 1;
-    xor >>= 1;
+    diff += xorred & 1;
+    xorred >>= 1;
   }
   return diff;
 }

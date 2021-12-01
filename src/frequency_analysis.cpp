@@ -76,14 +76,14 @@ float LetterFrequencyAnalyzer::evaluate(
       }
       else if (!std::isalnum(upper))
       {
-        score -= 10;
+        score -= 50;
       }
       continue;
     }
 
     const auto local_index = indices.at(upper);
     const auto diff = std::abs((float)local_index - ind.second);
-    score += 100 / (diff+1);
+    score += 100 / (diff/2+1);
   }
 
   score /= input.size();
