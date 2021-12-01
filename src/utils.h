@@ -12,10 +12,12 @@ namespace minicrypto
 
   base64_string byte_to_base64_string(const byte_string &input);
 
+  byte_string xor_byte_string(byte_string input_a, const uint8_t key);
   byte_string xor_byte_strings(byte_string input_a, const byte_string& input_b);
   byte_string to_upper(byte_string input);
 
   size_t hamming_distance(uint8_t a, uint8_t b);
   size_t hamming_distance(const byte_string& input_a, const byte_string& input_b);
-}
 
+  byte_string decrypt_single_char_xor(const byte_string& input);
+}

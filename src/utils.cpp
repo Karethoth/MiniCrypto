@@ -1,4 +1,7 @@
 #include "utils.h"
+#include "frequency_analysis.h"
+
+#include <unordered_map>
 
 using namespace minicrypto;
 
@@ -126,6 +129,17 @@ base64_string minicrypto::byte_to_base64_string(const byte_string &input)
 }
 
 
+byte_string minicrypto::xor_byte_string(
+  byte_string input_a,
+  const uint8_t key
+)
+{
+  byte_string input_b{};
+  input_b += key;
+
+  return minicrypto::xor_byte_strings(input_a, input_b);
+}
+
 byte_string minicrypto::xor_byte_strings(
   byte_string input_a,
   const byte_string& input_b
@@ -184,5 +198,18 @@ size_t minicrypto::hamming_distance(
 
   return distance;
 
+}
+
+byte_string minicrypto::decrypt_single_char_xor(const byte_string& input)
+{
+  const auto analyzer = LetterFrequencyAnalyzer::generate_english();
+  std::unordered_map<uint32_t, float> scores{};
+  for (uint32_t key = 0; key <= 255; ++key)
+  {
+    const auto decrypt_trial = xor_byte_string(input, key);
+    scores[key] = analyzer.evaluate(decrypt_trial);
+  }
+
+  return {};
 }
 

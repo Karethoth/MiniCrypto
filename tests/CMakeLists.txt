@@ -15,7 +15,10 @@ include(../cmake_helpers/config.cmake)
 # Tests
 enable_testing()
 set(CTEST_OUTPUT_ON_FAILURE 1)
-set(PROJECT_SOURCES ../src/utils.cpp)
+set(PROJECT_SOURCES
+  "../src/frequency_analysis.cpp"
+  "../src/utils.cpp"
+)
 add_executable(tests tests.cpp ${PROJECT_SOURCES})
 set_property(TARGET tests PROPERTY CXX_STANDARD 17)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)

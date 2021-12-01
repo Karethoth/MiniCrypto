@@ -18,6 +18,7 @@ set (PROJECT_SOURCES
   "src/global.cpp"
   "src/minicrypto.cpp"
   "src/utils.cpp"
+  "src/frequency_analysis.cpp"
   "src/nodes/node.cpp"
   "src/nodes/text_input_node.cpp"
   "src/nodes/text_display_node.cpp"
@@ -67,3 +68,4 @@ endif()
 
 include(CTest)
 add_subdirectory(tests)
+
