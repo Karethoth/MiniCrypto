@@ -5,6 +5,14 @@
 
 using namespace minicrypto;
 
+ValueWithConfidence::ValueWithConfidence(
+  byte_string value,
+  float confidence
+)
+: value(value), confidence(confidence)
+{
+}
+
 uint8_t minicrypto::hexchar_to_nibble(uint8_t c)
 {
   if ('a' <= c && c <= 'f' )
@@ -201,7 +209,7 @@ size_t minicrypto::hamming_distance(
 }
 
 
-byte_string minicrypto::decrypt_single_char_xor(const byte_string& input)
+ValueWithConfidence minicrypto::decrypt_single_char_xor(const byte_string& input)
 {
   const auto analyzer = LetterFrequencyAnalyzer::generate_english();
   const auto analyzer_dict = LetterFrequencyAnalyzer::generate_english_dict();
@@ -223,6 +231,6 @@ byte_string minicrypto::decrypt_single_char_xor(const byte_string& input)
     }
   }
 
-  return most_likely_string;
+  return { most_likely_string, most_likely_score };
 }
 

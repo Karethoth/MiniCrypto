@@ -93,9 +93,27 @@ TEST_CASE("1-2: Fixed XOR", "[xor_byte_strings]")
 
 TEST_CASE("1-3: Single-byte XOR cipher", "[decrypt_single_char_xor]")
 {
-  REQUIRE(
-    decrypt_single_char_xor(hex_to_byte_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"))
-    == "Cooking MC's like a pound of bacon"
+  const auto result = decrypt_single_char_xor(
+    hex_to_byte_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
   );
+
+  REQUIRE(result.value == "Cooking MC's like a pound of bacon");
+}
+
+TEST_CASE("1-4: Detect single-character XOR", "[decrypt_single_char_xor_from_file]")
+{
+  // TODO: Add find parent directory with a file search and use that to find the absolute path
+  const auto lines = read_lines_from_file("../../../../data/1_4.txt");
+  ValueWithConfidence current_best{ "", 0 };
+  for (const auto& line : lines)
+  {
+    const auto best_guess = decrypt_single_char_xor(hex_to_byte_string(line));
+    if (best_guess.confidence > current_best.confidence)
+    {
+      current_best = best_guess;
+    }
+  }
+
+  REQUIRE(current_best.value == "Now that the party is jumping\n");
 }
 

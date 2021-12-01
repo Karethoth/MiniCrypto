@@ -4,6 +4,14 @@
 
 namespace minicrypto
 {
+  struct ValueWithConfidence
+  {
+    byte_string value;
+    float confidence;
+
+    ValueWithConfidence(byte_string result, float confidence);
+  };
+
   uint8_t hexchar_to_nibble(uint8_t c);
   uint8_t nibble_to_hexchar(uint8_t c);
 
@@ -19,5 +27,6 @@ namespace minicrypto
   size_t hamming_distance(uint8_t a, uint8_t b);
   size_t hamming_distance(const byte_string& input_a, const byte_string& input_b);
 
-  byte_string decrypt_single_char_xor(const byte_string& input);
+  ValueWithConfidence decrypt_single_char_xor(const byte_string& input);
 }
+

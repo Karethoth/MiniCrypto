@@ -17,6 +17,7 @@ enable_testing()
 set(CTEST_OUTPUT_ON_FAILURE 1)
 set(PROJECT_SOURCES
   "../src/frequency_analysis.cpp"
+  "../src/ioutils.cpp"
   "../src/utils.cpp"
 )
 add_executable(tests tests.cpp ${PROJECT_SOURCES})

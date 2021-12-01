@@ -66,16 +66,24 @@ float LetterFrequencyAnalyzer::evaluate(
     const auto upper = std::toupper(ind.first);
     if (indices.find(upper) == indices.end())
     {
+      if (upper == ' ' || upper == '\r' || upper == '\n' || std::isalnum(upper))
+      {
+        continue;
+      }
       if (std::iscntrl(upper))
       {
         score -= 100;
+      }
+      else if (!std::isalnum(upper))
+      {
+        score -= 10;
       }
       continue;
     }
 
     const auto local_index = indices.at(upper);
     const auto diff = std::abs((float)local_index - ind.second);
-    score += 1 / (diff/10+1);
+    score += 100 / (diff+1);
   }
 
   score /= input.size();
