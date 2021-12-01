@@ -128,7 +128,7 @@ base64_string minicrypto::byte_to_base64_string(const byte_string &input)
 
 byte_string minicrypto::xor_byte_strings(
   byte_string input_a,
-  const byte_string&& input_b
+  const byte_string& input_b
 )
 {
   size_t index = 0;
@@ -150,5 +150,39 @@ byte_string minicrypto::to_upper(byte_string input)
     byte = std::toupper(byte);
   }
   return input;
+}
+
+size_t minicrypto::hamming_distance(uint8_t a, uint8_t b)
+{
+  uint8_t diff = 0;
+  uint8_t xor  = a ^ b;
+
+  while (xor)
+  {
+    diff += xor & 1;
+    xor >>= 1;
+  }
+  return diff;
+}
+
+size_t minicrypto::hamming_distance(
+  const byte_string& input_a,
+  const byte_string& input_b
+)
+{
+  const auto length_a = input_a.length();
+  const auto length_b = input_b.length();
+  const auto shared_length = std::min(length_a, length_b);
+  const auto tail_length   = std::max(length_a, length_b) - shared_length;
+
+  size_t distance = tail_length * 8;
+
+  for (auto i = 0; i < shared_length; ++i)
+  {
+    distance += hamming_distance(input_a[i], input_b[i]);
+  }
+
+  return distance;
+
 }
 
