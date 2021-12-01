@@ -91,10 +91,11 @@ TEST_CASE("1-2: Fixed XOR", "[xor_byte_strings]")
   );
 }
 
-TEST_CASE("1-3: Decrypt XOR", "[xor_byte_strings]")
+TEST_CASE("1-3: Single-byte XOR cipher", "[decrypt_single_char_xor]")
 {
   REQUIRE(
-    decrypt_single_char_xor(hex_to_byte_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")).length()
-    > 0
+    decrypt_single_char_xor(hex_to_byte_string("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"))
+    == "Cooking MC's like a pound of bacon"
   );
 }
+

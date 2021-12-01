@@ -49,12 +49,36 @@ float LetterFrequencyAnalyzer::evaluate(
   const byte_string& input
 ) const
 {
+  if (input.length() <= 0)
+  {
+    return 0.f;
+  }
+
   float score = 0;
 
   // Calculate letter frequencies
   const auto input_analysis = LetterFrequencyAnalyzer::generate_from_byte_string(input);
+  const auto input_frequencies = input_analysis.get_frequencies();
+  const auto input_indices = input_analysis.get_indices();
 
-  // TODO
+  for (const auto& ind : input_indices)
+  {
+    const auto upper = std::toupper(ind.first);
+    if (indices.find(upper) == indices.end())
+    {
+      if (std::iscntrl(upper))
+      {
+        score -= 100;
+      }
+      continue;
+    }
+
+    const auto local_index = indices.at(upper);
+    const auto diff = std::abs((float)local_index - ind.second);
+    score += 1 / (diff/10+1);
+  }
+
+  score /= input.size();
 
   return score;
 }
@@ -77,9 +101,13 @@ LetterFrequencyAnalyzer::generate_from_byte_string(
 )
 {
   std::unordered_map<uint32_t, uint32_t> occurences{};
-  for (const auto& c : input)
+  for (const unsigned char& c : input)
   {
     occurences[c]++;
+    if (c > 10000)
+    {
+      continue;
+    }
   }
 
   const float input_count = static_cast<float>(input.length());

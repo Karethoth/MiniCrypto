@@ -200,16 +200,29 @@ size_t minicrypto::hamming_distance(
 
 }
 
+
 byte_string minicrypto::decrypt_single_char_xor(const byte_string& input)
 {
   const auto analyzer = LetterFrequencyAnalyzer::generate_english();
+  const auto analyzer_dict = LetterFrequencyAnalyzer::generate_english_dict();
   std::unordered_map<uint32_t, float> scores{};
+
+  byte_string most_likely_string = "";
+  float most_likely_score = 0;
+  
   for (uint32_t key = 0; key <= 255; ++key)
   {
     const auto decrypt_trial = xor_byte_string(input, key);
-    scores[key] = analyzer.evaluate(decrypt_trial);
+    scores[key] = analyzer.evaluate(decrypt_trial)
+                + analyzer_dict.evaluate(decrypt_trial);
+
+    if (scores[key] > most_likely_score)
+    {
+      most_likely_score = scores[key];
+      most_likely_string = decrypt_trial;
+    }
   }
 
-  return {};
+  return most_likely_string;
 }
 
