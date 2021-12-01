@@ -25,15 +25,7 @@ minicrypto::DataTransformNode::DataTransformNode()
 
   transform_options.emplace_back("base64", minicrypto::byte_to_base64_string, true);
   transform_options.emplace_back("hex_to_bytes", minicrypto::hex_to_byte_string);
-  transform_options.emplace_back("to_upper", [](const byte_string& data)
-  {
-    byte_string result; result.reserve(data.size());
-    for (const auto& byte : data)
-    {
-      result += std::toupper(byte);
-    }
-    return result;
-  });
+  transform_options.emplace_back("to_upper", minicrypto::to_upper);
  
   selected_option = &(*transform_options.begin());
 

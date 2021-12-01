@@ -27,7 +27,7 @@ byte_string minicrypto::hex_to_byte_string(const hex_string &input)
   byte_string result = "";
 
   // Verify string length is an even number, 2 or above
-  if (input.size() % 2 != 0 || input.size() <= 0)
+  if (input.size() % 2 != 0)
   {
     throw std::runtime_error(
       "hex_to_byte_string(): Can't convert uneven number of characters to a byte string!"
@@ -123,5 +123,32 @@ base64_string minicrypto::byte_to_base64_string(const byte_string &input)
   }
 
   return result;
+}
+
+
+byte_string minicrypto::xor_byte_strings(
+  byte_string input_a,
+  const byte_string&& input_b
+)
+{
+  size_t index = 0;
+  
+  for (auto& c_a : input_a)
+  {
+    c_a ^= input_b[index];
+    index = (index + 1) % input_b.length();
+  }
+
+  return input_a;
+}
+
+
+byte_string minicrypto::to_upper(byte_string input)
+{
+  for (auto& byte : input)
+  {
+    byte = std::toupper(byte);
+  }
+  return input;
 }
 
