@@ -60,6 +60,17 @@ TEST_CASE("Bytes to base64 conversion", "[byte_to_base64_string]")
   REQUIRE(byte_to_base64_string("light w") == base64_string{"bGlnaHQgdw=="});
 }
 
+TEST_CASE("Hamming distance", "[hamming_distance]")
+{
+  REQUIRE(hamming_distance("", "") == 0);
+  REQUIRE(hamming_distance("", hex_to_byte_string("ffffff")) == 3 * 8);
+  REQUIRE(hamming_distance(hex_to_byte_string("ffffff"), "") == 3 * 8);
+  REQUIRE(hamming_distance(hex_to_byte_string("000000"), hex_to_byte_string("000000")) == 0);
+  REQUIRE(hamming_distance(hex_to_byte_string("aaaaaa"), hex_to_byte_string("aaaaaa")) == 0);
+  REQUIRE(hamming_distance(hex_to_byte_string("ffffff"), hex_to_byte_string("ffffff")) == 0);
+  REQUIRE(hamming_distance("this is a test", "wokka wokka!!!") == 37);
+}
+
 TEST_CASE("1-1: Convert hex to base64", "[hex_to_base64_string]")
 {
   const auto set_1_challenge_1_bytes = hex_to_byte_string(
