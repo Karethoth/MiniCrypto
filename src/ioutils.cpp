@@ -1,6 +1,7 @@
 #include "ioutils.h"
 
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
 #include <filesystem>
 
@@ -24,6 +25,30 @@ minicrypto::read_lines_from_file(const std::string& path)
     lines.push_back(line);
   }
   return lines;
+}
+
+
+minicrypto::byte_string minicrypto::read_line_split_data_file(
+  const std::string& path
+)
+{
+  std::ifstream stream{ path };
+  std::stringstream ss;
+  std::string line;
+
+  if (!stream.is_open())
+  {
+    throw std::runtime_error(
+      "Failed to open '" + path + "' from '" +
+      std::filesystem::current_path().u8string() + "'"
+    );
+  }
+
+  while (std::getline(stream, line))
+  {
+    ss << line;
+  }
+  return ss.str();
 }
 
 
