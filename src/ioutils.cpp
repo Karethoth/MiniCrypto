@@ -52,6 +52,27 @@ minicrypto::byte_string minicrypto::read_line_split_data_file(
 }
 
 
+std::string minicrypto::read_all_from_file(
+  const std::string& path
+)
+{
+  std::ifstream stream{ path };
+  std::stringstream ss;
+  std::string line;
+
+  if (!stream.is_open())
+  {
+    throw std::runtime_error(
+      "Failed to open '" + path + "' from '" +
+      std::filesystem::current_path().u8string() + "'"
+    );
+  }
+
+  ss << stream.rdbuf();
+  return ss.str();
+}
+
+
 std::string minicrypto::find_project_directory()
 {
   auto cwd = std::filesystem::current_path();
