@@ -5,14 +5,6 @@
 
 using namespace minicrypto;
 
-ValueWithConfidence::ValueWithConfidence(
-  byte_string value,
-  float confidence
-)
-: value(value), confidence(confidence)
-{
-}
-
 uint8_t minicrypto::hexchar_to_nibble(uint8_t c)
 {
   if ('a' <= c && c <= 'f' )
@@ -136,6 +128,15 @@ base64_string minicrypto::byte_to_base64_string(const byte_string &input)
   return result;
 }
 
+byte_string minicrypto::base64_to_byte_string(const base64_string &input)
+{
+  byte_string result = "";
+  uint8_t work_bits = 0;
+  uint8_t work_bits_count = 0;
+  throw std::runtime_error("base64_to_byte_string: not implemented");
+  return result;
+}
+
 
 byte_string minicrypto::xor_byte_string(
   byte_string input_a,
@@ -209,7 +210,8 @@ size_t minicrypto::hamming_distance(
 }
 
 
-ValueWithConfidence minicrypto::decrypt_single_char_xor(const byte_string& input)
+ValueWithConfidence<minicrypto::byte_string>
+minicrypto::decrypt_single_char_xor(const byte_string& input)
 {
   const auto analyzer = LetterFrequencyAnalyzer::generate_english();
   const auto analyzer_dict = LetterFrequencyAnalyzer::generate_english_dict();
@@ -232,5 +234,65 @@ ValueWithConfidence minicrypto::decrypt_single_char_xor(const byte_string& input
   }
 
   return { most_likely_string, most_likely_score };
+}
+
+
+ValueWithConfidence<size_t>
+guess_repeating_key_xor_length(
+  const byte_string& input,
+  const size_t samples = 2,
+  const uint8_t min = 1,
+  const uint8_t max = 40
+)
+{
+  ValueWithConfidence current_best{ 0, 0 };
+  for (auto key_length = min; key_length <= max; ++key_length)
+  {
+    // Calculate how many blocks we can get for sampling
+    const size_t available_blocks_count = (input.size() / key_length);
+    const size_t used_block_count = std::min(
+      available_blocks_count,
+      (size_t)samples
+    );
+
+    // Gather the blocks
+    std::vector<byte_string> blocks;
+    for (auto i = 0; i < used_block_count; ++i)
+    {
+      const auto offset = i * key_length;
+      blocks.push_back(input.substr(offset, key_length));
+    }
+
+    // Calculate average hamming distance between the blocks
+    size_t comparisons = 0;
+    size_t hamming_distance_sum = 0;
+    for (auto block_a = blocks.cbegin(); block_a != blocks.cend(); ++block_a)
+    {
+      for (auto block_b = block_a + 1; block_b != blocks.cend(); ++block_b)
+      {
+        ++comparisons;
+        hamming_distance_sum += hamming_distance(*block_a, *block_b);
+      }
+    }
+
+    // Normalize
+    const auto average = ((float)hamming_distance_sum / comparisons)
+                       / key_length;
+
+    const auto result = 100.f - average;
+
+    if (result > current_best.confidence)
+    {
+      current_best.confidence = result;
+      current_best.value = key_length;
+    }
+  }
+}
+
+ValueWithConfidence<minicrypto::byte_string>
+decrypt_repeating_key_xor(const byte_string& input)
+{
+
+  return { "", 0 };
 }
 

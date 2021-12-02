@@ -1,6 +1,7 @@
 #include "minicrypto.h"
 
 #include "global.h"
+#include "ioutils.h"
 #include "nodes/node.h"
 #include "nodes/text_input_node.h"
 #include "nodes/text_display_node.h"
@@ -82,6 +83,12 @@ void cleanup()
 
 int main(int, char**)
 {
+  const auto data = minicrypto::read_line_split_data_file(
+    minicrypto::find_project_directory() + "/data/1_6.txt"
+  );
+  auto x = minicrypto::decrypt_repeating_key_xor(
+    minicrypto::base64_to_byte_string(data);
+
   if (init_sdl() < 0)
   {
     return -1;
