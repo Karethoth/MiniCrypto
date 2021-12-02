@@ -222,7 +222,7 @@ ValueWithConfidence minicrypto::decrypt_single_char_xor(const byte_string& input
   {
     const auto decrypt_trial = xor_byte_string(input, key);
     scores[key] = analyzer.evaluate(decrypt_trial)
-                + analyzer_dict.evaluate(decrypt_trial);
+                + analyzer_dict.evaluate(decrypt_trial) / 2;
 
     if (scores[key] > most_likely_score)
     {
