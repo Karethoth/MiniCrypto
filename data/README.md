@@ -1,5 +1,6 @@
 # data/
-All files are downloaded from https://cryptopals.com
+All files in this directory have been downloaded from https://cryptopals.com except for the answers.
+The files in the answers directory have been self-generated.
 
 ## Set 1
 - `1_4.txt` - One of the lines contains a single-character XOR encrypted message
