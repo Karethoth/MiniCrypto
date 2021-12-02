@@ -148,3 +148,19 @@ TEST_CASE("1-5: Implement repeating-key XOR", "[decrypt_single_char_xor_from_fil
   );
 }
 
+
+TEST_CASE("1-6: Break repeating-key XOR", "[decrypt_repeating_key_xor]")
+{
+  const auto data = minicrypto::base64_to_byte_string(
+    minicrypto::read_line_split_data_file(
+      minicrypto::find_project_directory() + "/data/1_6.txt"
+    )
+  );
+  auto result = minicrypto::decrypt_repeating_key_xor(data);
+
+  const auto answer_data = minicrypto::read_all_from_file(
+    minicrypto::find_project_directory() + "/data/answers/1_6.txt"
+  );
+  REQUIRE(result.value == answer_data);
+}
+
