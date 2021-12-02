@@ -60,6 +60,19 @@ TEST_CASE("Bytes to base64 conversion", "[byte_to_base64_string]")
   REQUIRE(byte_to_base64_string("light w") == base64_string{"bGlnaHQgdw=="});
 }
 
+TEST_CASE("Base64 to bytes conversion", "[base64_to_byte_string]")
+{
+  REQUIRE(
+    byte_to_base64_string("Many hands make light work.") ==
+    base64_string{"TWFueSBoYW5kcyBtYWtlIGxpZ2h0IHdvcmsu"}
+  );
+  REQUIRE(base64_to_byte_string(byte_to_base64_string("Man")) == byte_string("Man"));
+  REQUIRE(base64_to_byte_string(byte_to_base64_string("Ma")) == byte_string("Ma"));
+  REQUIRE(base64_to_byte_string(byte_to_base64_string("M")) == byte_string("M"));
+  REQUIRE(base64_to_byte_string(byte_to_base64_string("light wo")) == byte_string("light wo"));
+  REQUIRE(base64_to_byte_string(byte_to_base64_string("light w")) == byte_string("light w"));
+}
+
 TEST_CASE("Hamming distance", "[hamming_distance]")
 {
   REQUIRE(hamming_distance("", "") == 0);
@@ -104,7 +117,7 @@ TEST_CASE("1-4: Detect single-character XOR", "[decrypt_single_char_xor_from_fil
 {
   // TODO: Add find parent directory with a file search and use that to find the absolute path
   const auto lines = read_lines_from_file(find_project_directory() + "/data/1_4.txt");
-  ValueWithConfidence current_best{ "", 0 };
+  ValueWithConfidence<byte_string> current_best{ "", 0 };
   for (const auto& line : lines)
   {
     const auto best_guess = decrypt_single_char_xor(hex_to_byte_string(line));

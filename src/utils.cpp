@@ -79,7 +79,7 @@ hex_string minicrypto::byte_to_hex_string(const byte_string &input)
   return result;
 }
 
-const uint8_t _base64_table[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+const char _base64_table[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 base64_string minicrypto::byte_to_base64_string(const byte_string &input)
 {
@@ -131,9 +131,31 @@ base64_string minicrypto::byte_to_base64_string(const byte_string &input)
 byte_string minicrypto::base64_to_byte_string(const base64_string &input)
 {
   byte_string result = "";
-  uint8_t work_bits = 0;
+  uint16_t work_bits = 0;
   uint8_t work_bits_count = 0;
-  throw std::runtime_error("base64_to_byte_string: not implemented");
+  for (const auto &c : input)
+  {
+    if (c == '=')
+    {
+      break;
+    }
+
+    uint8_t new_bits = static_cast<uint8_t>(
+      strchr(_base64_table, c) - _base64_table
+    );
+    work_bits = (work_bits << 6) | (0b111111 & new_bits);
+    work_bits_count += 6;
+
+    if (work_bits_count >= 8)
+    {
+      const uint8_t extra_bits_count = work_bits_count - 8;
+      const uint8_t data_bits = (work_bits >> extra_bits_count) & 0xFF;
+      work_bits_count -= 8;
+
+      result += data_bits;
+    }
+  }
+
   return result;
 }
 
@@ -245,7 +267,7 @@ guess_repeating_key_xor_length(
   const uint8_t max = 40
 )
 {
-  ValueWithConfidence current_best{ 0, 0 };
+  ValueWithConfidence<size_t> current_best{ 0, 0 };
   for (auto key_length = min; key_length <= max; ++key_length)
   {
     // Calculate how many blocks we can get for sampling
@@ -287,12 +309,14 @@ guess_repeating_key_xor_length(
       current_best.value = key_length;
     }
   }
+
+  return current_best;
 }
 
 ValueWithConfidence<minicrypto::byte_string>
-decrypt_repeating_key_xor(const byte_string& input)
+minicrypto::decrypt_repeating_key_xor(const byte_string& input)
 {
-
+  const auto best_length_guess = guess_repeating_key_xor_length(input);
   return { "", 0 };
 }
 

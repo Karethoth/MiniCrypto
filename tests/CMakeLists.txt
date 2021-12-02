@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
   "../src/frequency_analysis.cpp"
   "../src/ioutils.cpp"
   "../src/utils.cpp"
+  "../src/types.cpp"
 )
 add_executable(tests tests.cpp ${PROJECT_SOURCES})
 set_property(TARGET tests PROPERTY CXX_STANDARD 17)

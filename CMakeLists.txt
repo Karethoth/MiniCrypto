@@ -16,6 +16,7 @@ include_directories(
 
 set (PROJECT_SOURCES
   "src/global.cpp"
+  "src/types.cpp"
   "src/minicrypto.cpp"
   "src/utils.cpp"
   "src/ioutils.cpp"
