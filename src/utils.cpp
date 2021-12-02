@@ -262,7 +262,7 @@ minicrypto::decrypt_single_char_xor(const byte_string& input)
 ValueWithConfidence<size_t>
 guess_repeating_key_xor_length(
   const byte_string& input,
-  const size_t samples = 2,
+  const size_t samples = 4,
   const uint8_t min = 1,
   const uint8_t max = 40
 )
@@ -297,11 +297,11 @@ guess_repeating_key_xor_length(
       }
     }
 
-    // Normalize
+    // Normalize. Max average is 8
     const auto average = ((float)hamming_distance_sum / comparisons)
                        / key_length;
 
-    const auto result = 100.f - average;
+    const auto result = 1.f - average / 8.f;
 
     if (result > current_best.confidence)
     {
@@ -313,10 +313,35 @@ guess_repeating_key_xor_length(
   return current_best;
 }
 
+std::unordered_map<size_t, minicrypto::byte_string>
+split_data_into_columns(const minicrypto::byte_string &input, size_t n)
+{
+  std::unordered_map<size_t, minicrypto::byte_string> columns;
+
+  size_t counter = 0;
+  for (const auto& c : input)
+  {
+    const auto column = counter++ % n;
+    columns[column].push_back(c);
+  }
+
+  return columns;
+}
+
 ValueWithConfidence<minicrypto::byte_string>
 minicrypto::decrypt_repeating_key_xor(const byte_string& input)
 {
   const auto best_length_guess = guess_repeating_key_xor_length(input);
-  return { "", 0 };
+  const auto data_columns = split_data_into_columns(input, best_length_guess.value);
+  
+  minicrypto::byte_string key = "";
+  for (const auto& column : data_columns)
+  {
+    const auto decrypt_trial = decrypt_single_char_xor(column.second);
+    const auto key_byte = decrypt_trial.value[0] ^ column.second[0];
+    key += key_byte;
+  }
+
+  return { xor_byte_strings(input, key), 0};
 }
 
