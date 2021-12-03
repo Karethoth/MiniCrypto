@@ -361,7 +361,7 @@ minicrypto::decrypt_aes_ecb(
   output.resize(input.size() + 16);
 
   EVP_CIPHER_CTX* ctx;
-  int len = 0;
+  int len = 0, trailing_end = 0;
 
   if (!(ctx = EVP_CIPHER_CTX_new()))
     throw "EVP_CIPHER_CTX_new failed";
@@ -372,15 +372,17 @@ minicrypto::decrypt_aes_ecb(
   if (1 != EVP_DecryptUpdate(ctx, (uint8_t*)output.data(), &len, (const uint8_t*)input.data(), input.size()))
     throw "EVP_DecryptUpdate failed";
 
-  int output_len = len;
 
-  if (1 != EVP_DecryptFinal_ex(ctx, (uint8_t*)output.data() + len, &len)) 
+  if (1 != EVP_DecryptFinal_ex(ctx, (uint8_t*)output.data() + len, &trailing_end)) 
     throw "EVP_DecryptFinal failed";
 
-  output_len += len;
+  const auto byte_count = len + trailing_end;
 
   EVP_CIPHER_CTX_free(ctx);
 
-  return { output.begin(), output.begin() + output_len };
+  return {
+    output.begin(),
+    output.begin() + byte_count
+  };
 }
 
