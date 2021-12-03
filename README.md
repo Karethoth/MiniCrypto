@@ -9,6 +9,7 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 - [ImGui](https://github.com/ocornut/imgui)
 - [imnodes](https://github.com/Nelarius/imnodes)
 - [SDL2](https://www.libsdl.org)
+- OpenSSL
 
 ## Windows
 ### Installing dependencies on Windows
@@ -17,6 +18,7 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 
 ### Development Environment
 #### VS Code
+*A proper Visual Studio may still be needed for compiling OpenSSL*
 - Extensions:
   - C/C++
   - CMake

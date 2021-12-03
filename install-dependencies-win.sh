@@ -17,3 +17,10 @@ git clone --depth=1 --branch docking https://github.com/ocornut/imgui 3rdparty/i
 # ImNodes
 git clone --depth=1 https://github.com/Nelarius/imnodes 3rdparty/imnodes
 
+# OpenSSL
+git clone --depth=1 git://git.openssl.org/openssl.git 3rdparty/openssl
+cd 3rdparty/openssl
+git config core.autocrlf false
+git config core.eol lf
+git checkout .
+
