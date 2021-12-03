@@ -15,3 +15,5 @@ endif ()
 find_package(SDL2 REQUIRED)
 
 include(cmake_helpers/imgui.cmake)
+include(cmake_helpers/openssl.cmake)
+

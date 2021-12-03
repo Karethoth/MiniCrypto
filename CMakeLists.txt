@@ -12,6 +12,7 @@ include_directories(
   ${OPENGL_INCLUDE_DIRS}
   ${SDL2_INCLUDE_DIRS}
   ${IMGUI_INCLUDE_DIR}
+  ${OPENSSL_INCLUDE_DIR}
 )
 
 set (PROJECT_SOURCES
@@ -47,25 +48,37 @@ add_executable (minicrypto
 )
 
 set_property(TARGET minicrypto PROPERTY CXX_STANDARD 17)
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
 
 target_link_libraries(minicrypto
   ${OPENGL_LIBRARIES}
   ${SDL2_LIBRARIES}
   ${IMGUI_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
 )
 
-# SDL2.dll for Windows
+# SDL2.dll and OpenSSL for Windows
 if (WIN32)
   if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(SDL2_LIB_DIR "x64")
+    set(OPENSSL_AFFIX "x64")
   else()
     set(SDL2_LIB_DIR "x86")
+    set(OPENSSL_AFFIX "x86")
   endif()
 
   add_custom_command(TARGET minicrypto POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib/${SDL2_LIB_DIR}/SDL2.dll"
     $<TARGET_FILE_DIR:minicrypto>/SDL2.dll)
+
+  add_custom_command(TARGET minicrypto POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${PROJECT_SOURCE_DIR}/3rdparty/openssl/libcrypto-3-${OPENSSL_AFFIX}.dll"
+    $<TARGET_FILE_DIR:minicrypto>/libcrypto-3-${OPENSSL_AFFIX}.dll)
 endif()
 
 include(CTest)
