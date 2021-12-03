@@ -209,4 +209,4 @@ TEST_CASE("1-7: AES in ECB mode", "[decrypt_aes_ecb]")
 
   REQUIRE(result == answer);
 }
-   
+
