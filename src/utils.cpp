@@ -1,7 +1,13 @@
 #include "utils.h"
+#include "ioutils.h"
+
 #include "frequency_analysis.h"
 
 #include <unordered_map>
+
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
 
 using namespace minicrypto;
 
@@ -343,5 +349,38 @@ minicrypto::decrypt_repeating_key_xor(const byte_string& input)
   }
 
   return { xor_byte_strings(input, key), 0};
+}
+
+minicrypto::byte_string
+minicrypto::decrypt_aes_ecb(
+  const minicrypto::byte_string& input,
+  const minicrypto::byte_string& key
+)
+{
+  minicrypto::byte_string output;
+  output.resize(input.size() + 16);
+
+  EVP_CIPHER_CTX* ctx;
+  int len = 0;
+
+  if (!(ctx = EVP_CIPHER_CTX_new()))
+    throw "EVP_CIPHER_CTX_new failed";
+
+  if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_ecb(), nullptr, (const uint8_t*)key.data(), nullptr))
+    throw "EVP_aes_128_ecb failed";
+
+  if (1 != EVP_DecryptUpdate(ctx, (uint8_t*)output.data(), &len, (const uint8_t*)input.data(), input.size()))
+    throw "EVP_DecryptUpdate failed";
+
+  int output_len = len;
+
+  if (1 != EVP_DecryptFinal_ex(ctx, (uint8_t*)output.data() + len, &len)) 
+    throw "EVP_DecryptFinal failed";
+
+  output_len += len;
+
+  EVP_CIPHER_CTX_free(ctx);
+
+  return { output.begin(), output.begin() + output_len };
 }
 

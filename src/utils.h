@@ -25,5 +25,8 @@ namespace minicrypto
 
   ValueWithConfidence<byte_string>
   decrypt_repeating_key_xor(const byte_string& input);
+
+  byte_string
+  decrypt_aes_ecb(const byte_string& input, const minicrypto::byte_string& key);
 }
 
