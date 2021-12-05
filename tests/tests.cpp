@@ -185,7 +185,7 @@ TEST_CASE("1-7: AES in ECB mode", "[decrypt_aes_ecb]")
   REQUIRE(result == answer);
 }
 
-TEST_CASE("1-8: Detect ECB", "[detect_ecb]")
+TEST_CASE("1-8: Detect AES in ECB mode", "[detect_ecb]")
 {
   const auto lines = minicrypto::read_lines_from_file(
     minicrypto::find_project_directory() + "/data/1_8.txt"
@@ -230,5 +230,15 @@ TEST_CASE("1-8: Detect ECB", "[detect_ecb]")
       "AB51B29933F2C123C58386B06FBA186A"
     }
   );
+}
+
+TEST_CASE("2-9: Implement PKCS#7 padding", "[pkcs7_pad]")
+{
+  REQUIRE(minicrypto::pkcs7_pad("", 0) == minicrypto::byte_string{ "" });
+  REQUIRE(minicrypto::pkcs7_pad("", 1) == minicrypto::byte_string{ "\x01" });
+  REQUIRE(minicrypto::pkcs7_pad("A", 1) == minicrypto::byte_string{ "A" });
+  REQUIRE(minicrypto::pkcs7_pad("A", 2) == minicrypto::byte_string{ "A\x01" });
+  REQUIRE(minicrypto::pkcs7_pad("A", 3) == minicrypto::byte_string{ "A\x02\x02" });
+  REQUIRE(minicrypto::pkcs7_pad("YELLOW SUBMARINE", 20) == minicrypto::byte_string{ "YELLOW SUBMARINE\x04\x04\x04\x04" });
 }
 

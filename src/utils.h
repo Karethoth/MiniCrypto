@@ -50,5 +50,7 @@ namespace minicrypto
   find_most_repeated_block(
     const std::vector<byte_string>& blocks
   );
+
+  byte_string pkcs7_pad(const byte_string& input, const size_t blocksize);
 }
 

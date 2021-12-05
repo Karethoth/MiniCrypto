@@ -425,3 +425,21 @@ minicrypto::find_most_repeated_block(
   return best_guess;
 }
 
+minicrypto::byte_string
+minicrypto::pkcs7_pad(const minicrypto::byte_string& input, const size_t blocksize)
+{
+  if (input.size() > blocksize)
+  {
+    throw std::runtime_error("pkcs7_pad: input length > blocksize!");
+  }
+
+  if (blocksize - input.size() > 0xFF)
+  {
+    throw std::runtime_error("pkcs7_pad: (blocksize - input length) > 0xFF!");
+  }
+
+  const uint8_t filler_byte = static_cast<uint8_t>(blocksize - input.size());
+  const auto padding = minicrypto::byte_string(filler_byte, filler_byte);
+  return input + padding;
+}
+
