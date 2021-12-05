@@ -396,10 +396,11 @@ minicrypto::decrypt_aes_ecb(
 
   EVP_CIPHER_CTX_free(ctx);
 
-  return {
-    output.begin(),
-    output.begin() + byte_count
-  };
+  return pkcs7_unpad({
+      output.cbegin(),
+      output.cbegin() + byte_count
+    }, key.size()
+  );
 }
 
 
@@ -481,6 +482,40 @@ minicrypto::pkcs7_pad(const minicrypto::byte_string& input, const size_t blocksi
   const uint8_t filler_byte = static_cast<uint8_t>(blocksize - input.size());
   const auto padding = minicrypto::byte_string(filler_byte, filler_byte);
   return input + padding;
+}
+
+minicrypto::byte_string
+minicrypto::pkcs7_unpad(const minicrypto::byte_string& input, const size_t blocksize)
+{
+  const auto blocks = (input.size() / blocksize) - 1;
+  const auto last_block = input.substr(blocks * blocksize);
+  if (last_block.size() != blocksize)
+  {
+    throw std::runtime_error("pkcs7_unpad: last block not size of a block!");
+  }
+
+  const auto last_byte = last_block.at(blocksize - 1);
+  if (!last_byte || last_byte > blocksize)
+  {
+    // Handle as if not padded
+    return input;
+  }
+
+  // Go backward from the end and check if there is
+  // something that doens't match the padding pattern
+  size_t from_end = 1;
+  while (from_end <= last_byte)
+  {
+    if (last_block[blocksize - from_end] != last_byte)
+    {
+      return input;
+    }
+
+    ++from_end;
+  }
+
+  // Remove padding
+  return input.substr(0, input.size() - last_byte);
 }
 
 
