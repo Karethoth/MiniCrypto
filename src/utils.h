@@ -2,6 +2,8 @@
 
 #include "types.h"
 
+#include <vector>
+
 namespace minicrypto
 {
   uint8_t hexchar_to_nibble(uint8_t c);
@@ -23,10 +25,30 @@ namespace minicrypto
   ValueWithConfidence<byte_string>
   decrypt_single_char_xor(const byte_string& input);
 
+  std::vector<byte_string>
+    get_blocks_of_size(
+      const byte_string& input,
+      const size_t blocksize,
+      const size_t max_blocks = 0
+    );
+
+  ValueWithConfidence<size_t>
+  guess_repeating_key_xor_length(
+    const byte_string& input,
+    const size_t samples = 4,
+    const uint8_t min = 1,
+    const uint8_t max = 40
+  );
+
   ValueWithConfidence<byte_string>
   decrypt_repeating_key_xor(const byte_string& input);
 
   byte_string
   decrypt_aes_ecb(const byte_string& input, const minicrypto::byte_string& key);
+
+  ValueWithConfidence<byte_string, size_t>
+  find_most_repeated_block(
+    const std::vector<byte_string>& blocks
+  );
 }
 

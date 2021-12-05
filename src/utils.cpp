@@ -264,32 +264,43 @@ minicrypto::decrypt_single_char_xor(const byte_string& input)
   return { most_likely_string, most_likely_score };
 }
 
+std::vector<minicrypto::byte_string>
+minicrypto::get_blocks_of_size(
+  const minicrypto::byte_string& input,
+  const size_t blocksize,
+  const size_t max_blocks
+)
+{
+  std::vector<minicrypto::byte_string> blocks;
+
+  // Calculate how many blocks we can get
+  const size_t available_blocks_count = (input.size() / blocksize);
+  const size_t used_block_count =
+    max_blocks == 0 ? available_blocks_count
+                    : std::min(available_blocks_count, (size_t)max_blocks);
+
+  // Gather the blocks
+  for (auto i = 0; i < used_block_count; ++i)
+  {
+    const auto offset = i * blocksize;
+    blocks.push_back(input.substr(offset, blocksize));
+  }
+
+  return blocks;
+}
 
 ValueWithConfidence<size_t>
-guess_repeating_key_xor_length(
+minicrypto::guess_repeating_key_xor_length(
   const byte_string& input,
-  const size_t samples = 4,
-  const uint8_t min = 1,
-  const uint8_t max = 40
+  const size_t samples,
+  const uint8_t min,
+  const uint8_t max
 )
 {
   ValueWithConfidence<size_t> current_best{ 0, 0 };
   for (auto key_length = min; key_length <= max; ++key_length)
   {
-    // Calculate how many blocks we can get for sampling
-    const size_t available_blocks_count = (input.size() / key_length);
-    const size_t used_block_count = std::min(
-      available_blocks_count,
-      (size_t)samples
-    );
-
-    // Gather the blocks
-    std::vector<byte_string> blocks;
-    for (auto i = 0; i < used_block_count; ++i)
-    {
-      const auto offset = i * key_length;
-      blocks.push_back(input.substr(offset, key_length));
-    }
+    const auto blocks = minicrypto::get_blocks_of_size(input, key_length, samples);
 
     // Calculate average hamming distance between the blocks
     size_t comparisons = 0;
@@ -351,6 +362,7 @@ minicrypto::decrypt_repeating_key_xor(const byte_string& input)
   return { xor_byte_strings(input, key), 0};
 }
 
+
 minicrypto::byte_string
 minicrypto::decrypt_aes_ecb(
   const minicrypto::byte_string& input,
@@ -361,7 +373,7 @@ minicrypto::decrypt_aes_ecb(
   output.resize(input.size() + 16);
 
   EVP_CIPHER_CTX* ctx;
-  int len = 0, trailing_end = 0;
+  int len = 0, partial_len = 0;
 
   if (!(ctx = EVP_CIPHER_CTX_new()))
     throw "EVP_CIPHER_CTX_new failed";
@@ -369,14 +381,15 @@ minicrypto::decrypt_aes_ecb(
   if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_ecb(), nullptr, (const uint8_t*)key.data(), nullptr))
     throw "EVP_aes_128_ecb failed";
 
-  if (1 != EVP_DecryptUpdate(ctx, (uint8_t*)output.data(), &len, (const uint8_t*)input.data(), input.size()))
+  if (1 != EVP_DecryptUpdate(ctx, (uint8_t*)output.data(), &len, (const uint8_t*)input.data(), static_cast<int>(input.size())))
     throw "EVP_DecryptUpdate failed";
 
+  partial_len = len;
 
-  if (1 != EVP_DecryptFinal_ex(ctx, (uint8_t*)output.data() + len, &trailing_end)) 
+  if (1 != EVP_DecryptFinal_ex(ctx, (uint8_t*)output.data() + len, &len)) 
     throw "EVP_DecryptFinal failed";
 
-  const auto byte_count = len + trailing_end;
+  const auto byte_count = partial_len + len;
 
   EVP_CIPHER_CTX_free(ctx);
 
@@ -384,5 +397,31 @@ minicrypto::decrypt_aes_ecb(
     output.begin(),
     output.begin() + byte_count
   };
+}
+
+
+minicrypto::ValueWithConfidence<minicrypto::byte_string, size_t>
+minicrypto::find_most_repeated_block(
+  const std::vector<minicrypto::byte_string>& blocks
+)
+{
+  std::unordered_map<minicrypto::byte_string, size_t> encounters;
+  for (const auto& block : blocks)
+  {
+    encounters[block]++;
+  }
+
+  ValueWithConfidence<minicrypto::byte_string, size_t> best_guess{ "", 0 };
+  for (const auto& enc : encounters)
+  {
+    const auto duplicate_count = enc.second - 1;
+    if (duplicate_count > best_guess.confidence)
+    {
+      best_guess.value = enc.first;
+      best_guess.confidence = duplicate_count;
+    }
+  }
+
+  return best_guess;
 }
 

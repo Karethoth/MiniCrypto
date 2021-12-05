@@ -1,5 +1,8 @@
 #include "tests.h"
 
+#include <algorithm>
+#include <unordered_map>
+
 using namespace minicrypto;
 using namespace std::string_literals;
 
@@ -180,5 +183,52 @@ TEST_CASE("1-7: AES in ECB mode", "[decrypt_aes_ecb]")
   );
 
   REQUIRE(result == answer);
+}
+
+TEST_CASE("1-8: Detect ECB", "[detect_ecb]")
+{
+  const auto lines = minicrypto::read_lines_from_file(
+    minicrypto::find_project_directory() + "/data/1_8.txt"
+  );
+
+  std::vector<minicrypto::byte_string> byte_string_lines{ lines.size() };
+  std::transform(
+    lines.cbegin(),
+    lines.cend(),
+    byte_string_lines.begin(),
+    [](const auto& el)
+    {
+      return minicrypto::hex_to_byte_string(el);
+    }
+  );
+
+  minicrypto::ValueWithConfidence<minicrypto::byte_string, size_t> best_line{ "", 0 };
+
+  for (const auto& line : byte_string_lines)
+  {
+    const auto blocks = minicrypto::get_blocks_of_size(line, 16);
+    const auto most_repeated_block = minicrypto::find_most_repeated_block(blocks);
+
+    if (most_repeated_block.confidence > best_line.confidence)
+    {
+      best_line.value = line;
+      best_line.confidence = most_repeated_block.confidence;
+    }
+  }
+
+  REQUIRE(
+    minicrypto::byte_to_hex_string(best_line.value) == hex_string{
+      "D880619740A8A19B7840A8A31C810A3D"
+      "08649AF70DC06F4FD5D2D69C744CD283" // 1
+      "E2DD052F6B641DBF9D11B0348542BB57"
+      "08649AF70DC06F4FD5D2D69C744CD283" // 2
+      "9475C9DFDBC1D46597949D9C7E82BF5A"
+      "08649AF70DC06F4FD5D2D69C744CD283" // 3
+      "97A93EAB8D6AECD566489154789A6B03"
+      "08649AF70DC06F4FD5D2D69C744CD283" // 4
+      "D403180C98C8F6DB1F2A3F9C4040DEB0"
+      "AB51B29933F2C123C58386B06FBA186A"
+    }
+  );
 }
 

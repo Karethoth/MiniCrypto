@@ -8,13 +8,13 @@ namespace minicrypto
   using byte_string   = std::string;
   using base64_string = std::string;
 
-  template <typename T>
+  template <typename T_Value, typename T_Confidence=float>
   struct ValueWithConfidence
   {
-    T value;
-    float confidence;
+    T_Value value;
+    T_Confidence confidence;
 
-    ValueWithConfidence(T value, float confidence)
+    ValueWithConfidence(T_Value value, T_Confidence confidence)
     : value(value), confidence(confidence)
     {
     }
