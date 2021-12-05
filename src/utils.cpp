@@ -378,6 +378,8 @@ minicrypto::decrypt_aes_ecb(
   if (!(ctx = EVP_CIPHER_CTX_new()))
     throw "EVP_CIPHER_CTX_new failed";
 
+  EVP_CIPHER_CTX_set_padding(ctx, 0);
+
   if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_ecb(), nullptr, (const uint8_t*)key.data(), nullptr))
     throw "EVP_aes_128_ecb failed";
 
@@ -385,10 +387,11 @@ minicrypto::decrypt_aes_ecb(
     throw "EVP_DecryptUpdate failed";
 
   partial_len = len;
-
-  if (1 != EVP_DecryptFinal_ex(ctx, (uint8_t*)output.data() + len, &len)) 
-    throw "EVP_DecryptFinal failed";
-
+  if (partial_len > 0)
+  {
+    if (1 != EVP_DecryptFinal_ex(ctx, (uint8_t*)output.data() + len, &len)) 
+      throw "EVP_DecryptFinal failed";
+  }
   const auto byte_count = partial_len + len;
 
   EVP_CIPHER_CTX_free(ctx);
@@ -478,5 +481,36 @@ minicrypto::pkcs7_pad(const minicrypto::byte_string& input, const size_t blocksi
   const uint8_t filler_byte = static_cast<uint8_t>(blocksize - input.size());
   const auto padding = minicrypto::byte_string(filler_byte, filler_byte);
   return input + padding;
+}
+
+
+minicrypto::byte_string
+minicrypto::decrypt_cbc(
+  const minicrypto::byte_string& input,
+  const minicrypto::byte_string& key,
+  const minicrypto::byte_string& iv
+)
+{
+  minicrypto::byte_string output{};
+
+  auto blocks = minicrypto::get_blocks_of_size(input, 16);
+  if (blocks.size() * 16 < input.size())
+  {
+    blocks.push_back(input.substr(blocks.size() * 16));
+  }
+
+  auto last_block = iv;
+
+  for (const auto& block : blocks)
+  {
+    const auto decrypted = minicrypto::decrypt_aes_ecb(block, key);
+    const auto plaintext = minicrypto::xor_byte_strings(decrypted, last_block);
+
+    output += plaintext;
+
+    last_block = block;
+  }
+
+  return output;
 }
 

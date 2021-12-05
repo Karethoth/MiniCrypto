@@ -55,5 +55,11 @@ namespace minicrypto
   );
 
   byte_string pkcs7_pad(const byte_string& input, const size_t blocksize);
+
+  byte_string decrypt_cbc(
+    const byte_string& input,
+    const byte_string& key,
+    const byte_string& iv
+  );
 }
 
