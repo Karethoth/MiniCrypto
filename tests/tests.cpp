@@ -239,6 +239,49 @@ TEST_CASE("2-9: Implement PKCS#7 padding", "[pkcs7_pad]")
   REQUIRE(minicrypto::pkcs7_pad("A", 1) == minicrypto::byte_string{ "A" });
   REQUIRE(minicrypto::pkcs7_pad("A", 2) == minicrypto::byte_string{ "A\x01" });
   REQUIRE(minicrypto::pkcs7_pad("A", 3) == minicrypto::byte_string{ "A\x02\x02" });
-  REQUIRE(minicrypto::pkcs7_pad("YELLOW SUBMARINE", 20) == minicrypto::byte_string{ "YELLOW SUBMARINE\x04\x04\x04\x04" });
+  REQUIRE(
+    minicrypto::pkcs7_pad("YELLOW SUBMARINE", 20)
+    ==
+    minicrypto::byte_string{ "YELLOW SUBMARINE\x04\x04\x04\x04" }
+  );
+}
+
+
+TEST_CASE("AES ECB encrypt", "[encrypt_aes_ecb]")
+{
+  REQUIRE(
+    minicrypto::decrypt_aes_ecb(
+      minicrypto::encrypt_aes_ecb(
+        "YELLOW SUBMARINE",
+        "YELLOW SUBMARINE"
+      ),
+      "YELLOW SUBMARINE"
+    )
+    == "YELLOW SUBMARINE"
+  );
+
+  REQUIRE(
+    minicrypto::decrypt_aes_ecb(
+      minicrypto::encrypt_aes_ecb(
+        "YELLOW",
+        "YELLOW SUBMARINE"
+      ),
+      "YELLOW SUBMARINE"
+     )
+     == "YELLOW"
+  );
+
+  REQUIRE(
+    minicrypto::decrypt_aes_ecb(
+      minicrypto::encrypt_aes_ecb(
+        "In CBC mode, each ciphertext block is added to the next "
+        "plaintext block before the next call to the cipher core.",
+        "HELLO WORLD,SUP?"
+      ),
+      "HELLO WORLD,SUP?"
+    )
+    == "In CBC mode, each ciphertext block is added to the next "
+       "plaintext block before the next call to the cipher core."
+  );
 }
 

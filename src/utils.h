@@ -44,7 +44,10 @@ namespace minicrypto
   decrypt_repeating_key_xor(const byte_string& input);
 
   byte_string
-  decrypt_aes_ecb(const byte_string& input, const minicrypto::byte_string& key);
+  decrypt_aes_ecb(const byte_string& input, const byte_string& key);
+
+  byte_string
+  encrypt_aes_ecb(const byte_string& input, const byte_string& key);
 
   ValueWithConfidence<byte_string, size_t>
   find_most_repeated_block(

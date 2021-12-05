@@ -400,6 +400,43 @@ minicrypto::decrypt_aes_ecb(
 }
 
 
+minicrypto::byte_string
+minicrypto::encrypt_aes_ecb(
+  const minicrypto::byte_string& input,
+  const minicrypto::byte_string& key
+)
+{
+  minicrypto::byte_string output;
+  output.resize(input.size() + 16);
+
+  EVP_CIPHER_CTX* ctx;
+  int len = 0, partial_len = 0;
+
+  if (!(ctx = EVP_CIPHER_CTX_new()))
+    throw "EVP_CIPHER_CTX_new failed";
+
+  if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), nullptr, (const uint8_t*)key.data(), nullptr))
+    throw "EVP_aes_128_ecb failed";
+
+  if (1 != EVP_EncryptUpdate(ctx, (uint8_t*)output.data(), &len, (const uint8_t*)input.data(), static_cast<int>(input.size())))
+    throw "EVP_DecryptUpdate failed";
+
+  partial_len = len;
+
+  if (1 != EVP_EncryptFinal_ex(ctx, (uint8_t*)output.data() + len, &len))
+    throw "EVP_DecryptFinal failed";
+
+  const auto byte_count = partial_len + len;
+
+  EVP_CIPHER_CTX_free(ctx);
+
+  return {
+    output.begin(),
+    output.begin() + byte_count
+  };
+}
+
+
 minicrypto::ValueWithConfidence<minicrypto::byte_string, size_t>
 minicrypto::find_most_repeated_block(
   const std::vector<minicrypto::byte_string>& blocks
