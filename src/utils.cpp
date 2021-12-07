@@ -594,6 +594,12 @@ minicrypto::encrypt_cbc(
   return output;
 }
 
+uint8_t
+minicrypto::generate_random_byte()
+{
+  std::random_device rnd;
+  return rnd();
+}
 
 minicrypto::byte_string
 minicrypto::generate_random_key(const size_t length)
@@ -605,5 +611,16 @@ minicrypto::generate_random_key(const size_t length)
   std::generate(key.begin(), key.end(), std::ref(rnd));
 
   return key;
+}
+
+uint8_t
+minicrypto::ecb_cbc_oracle(
+  const minicrypto::byte_string& input,
+  const size_t blocksize
+)
+{
+  const auto blocks = minicrypto::get_blocks_of_size(input, blocksize);
+  const auto repeated_block = minicrypto::find_most_repeated_block(blocks);
+  return repeated_block.confidence <= 0;
 }
 

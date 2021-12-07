@@ -70,7 +70,16 @@ namespace minicrypto
     const byte_string& iv
   );
 
+  uint8_t generate_random_byte();
+
   byte_string
   generate_random_key(const size_t length = 16);
+
+  // Returns 0 if ECB,
+  // Returns 1 if CBC
+  uint8_t ecb_cbc_oracle(
+    const byte_string& input,
+    const size_t blocksize=16
+  );
 }
 
