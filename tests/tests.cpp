@@ -308,18 +308,6 @@ TEST_CASE("AES ECB encrypt", "[encrypt_aes_ecb]")
 
 TEST_CASE("2-10: Implement CBC mode", "decrypt_cbc")
 {
-  const auto data = minicrypto::base64_to_byte_string(
-    minicrypto::read_line_split_data_file(
-      minicrypto::find_project_directory() + "/data/2_10.txt"
-    )
-  );
-  auto result = minicrypto::decrypt_cbc(
-    data,
-    "YELLOW SUBMARINE",
-    minicrypto::byte_string( (int)16, '\0' )
-  );
-
-
   REQUIRE(
     decrypt_cbc(
       encrypt_cbc(
@@ -347,5 +335,22 @@ TEST_CASE("2-10: Implement CBC mode", "decrypt_cbc")
     ==
     "YELLOW_SUBMARIN\x01"
   );
+
+  const auto data = minicrypto::base64_to_byte_string(
+    minicrypto::read_line_split_data_file(
+      minicrypto::find_project_directory() + "/data/2_10.txt"
+    )
+  );
+  auto result = minicrypto::decrypt_cbc(
+    data,
+    "YELLOW SUBMARINE",
+    minicrypto::byte_string( (int)16, '\0' )
+  );
+
+  const auto answer = minicrypto::read_all_from_file(
+    minicrypto::find_project_directory() + "/data/answers/2_10.txt"
+  );
+  
+  REQUIRE(result == answer);
 }
 
