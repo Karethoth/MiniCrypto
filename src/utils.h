@@ -69,5 +69,8 @@ namespace minicrypto
     const byte_string& key,
     const byte_string& iv
   );
+
+  byte_string
+  generate_random_key(const size_t length = 16);
 }
 

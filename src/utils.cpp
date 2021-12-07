@@ -4,6 +4,7 @@
 #include "frequency_analysis.h"
 
 #include <unordered_map>
+#include <random>
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>
@@ -591,5 +592,18 @@ minicrypto::encrypt_cbc(
   }
 
   return output;
+}
+
+
+minicrypto::byte_string
+minicrypto::generate_random_key(const size_t length)
+{
+  minicrypto::byte_string key(length, 'A');
+  key.resize(length);
+
+  std::random_device rnd;
+  std::generate(key.begin(), key.end(), std::ref(rnd));
+
+  return key;
 }
 

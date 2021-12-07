@@ -354,3 +354,11 @@ TEST_CASE("2-10: Implement CBC mode", "decrypt_cbc")
   REQUIRE(result == answer);
 }
 
+TEST_CASE("Random key generator", "[generate_random_key]")
+{
+  REQUIRE(minicrypto::generate_random_key(0).size() == 0);
+  REQUIRE(minicrypto::generate_random_key(1).size() == 1);
+  REQUIRE(minicrypto::generate_random_key(10).size() == 10);
+  REQUIRE(minicrypto::generate_random_key(16).size() == 16);
+}
+
