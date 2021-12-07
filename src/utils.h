@@ -62,5 +62,12 @@ namespace minicrypto
     const byte_string& key,
     const byte_string& iv
   );
+
+  byte_string
+  encrypt_cbc(
+    const byte_string& input,
+    const byte_string& key,
+    const byte_string& iv
+  );
 }
 

@@ -176,7 +176,10 @@ TEST_CASE("1-7: AES in ECB mode", "[decrypt_aes_ecb]")
   );
   const minicrypto::byte_string key = "YELLOW SUBMARINE";
 
-  const auto result = minicrypto::decrypt_aes_ecb(input, key);
+  const auto result = minicrypto::pkcs7_unpad(
+    minicrypto::decrypt_aes_ecb(input, key),
+    16
+  );
 
   const minicrypto::byte_string answer = minicrypto::read_all_from_file(
     minicrypto::find_project_directory() + "/data/answers/1_7.txt"
@@ -236,7 +239,7 @@ TEST_CASE("2-9: Implement PKCS#7 padding", "[pkcs7_pad]")
 {
   REQUIRE(minicrypto::pkcs7_pad("", 0) == minicrypto::byte_string{ "" });
   REQUIRE(minicrypto::pkcs7_pad("", 1) == minicrypto::byte_string{ "\x01" });
-  REQUIRE(minicrypto::pkcs7_pad("A", 1) == minicrypto::byte_string{ "A" });
+  REQUIRE(minicrypto::pkcs7_pad("A", 1) == minicrypto::byte_string{ "A\x01" }); // needs blocksize padding
   REQUIRE(minicrypto::pkcs7_pad("A", 2) == minicrypto::byte_string{ "A\x01" });
   REQUIRE(minicrypto::pkcs7_pad("A", 3) == minicrypto::byte_string{ "A\x02\x02" });
   REQUIRE(
@@ -260,25 +263,43 @@ TEST_CASE("AES ECB encrypt", "[encrypt_aes_ecb]")
     == "YELLOW SUBMARINE"
   );
 
-  REQUIRE(
-    minicrypto::decrypt_aes_ecb(
-      minicrypto::encrypt_aes_ecb(
-        "YELLOW",
-        "YELLOW SUBMARINE"
-      ),
+  auto encrypted =
+    minicrypto::encrypt_aes_ecb(
+      minicrypto::pkcs7_pad("YELLOW", 16),
       "YELLOW SUBMARINE"
-     )
-     == "YELLOW"
-  );
+    );
+
+  auto decrypted =
+    minicrypto::decrypt_aes_ecb(
+      encrypted,
+      "YELLOW SUBMARINE"
+    );
 
   REQUIRE(
-    minicrypto::decrypt_aes_ecb(
-      minicrypto::encrypt_aes_ecb(
+    minicrypto::pkcs7_unpad(
+      decrypted,
+      16
+    )
+    == "YELLOW"
+  );
+
+  encrypted =
+    minicrypto::encrypt_aes_ecb(
+      minicrypto::pkcs7_pad(
         "In CBC mode, each ciphertext block is added to the next "
         "plaintext block before the next call to the cipher core.",
-        "HELLO WORLD,SUP?"
+        16
       ),
       "HELLO WORLD,SUP?"
+    );
+
+  REQUIRE(
+    minicrypto::pkcs7_unpad(
+      minicrypto::decrypt_aes_ecb(
+        encrypted,
+        "HELLO WORLD,SUP?"
+      ),
+      16
     )
     == "In CBC mode, each ciphertext block is added to the next "
        "plaintext block before the next call to the cipher core."
@@ -296,6 +317,35 @@ TEST_CASE("2-10: Implement CBC mode", "decrypt_cbc")
     data,
     "YELLOW SUBMARINE",
     minicrypto::byte_string( (int)16, '\0' )
+  );
+
+
+  REQUIRE(
+    decrypt_cbc(
+      encrypt_cbc(
+        "Ehrsam, Meyer, Smith and Tuchman invented the cipher block chaining (CBC)",
+        "YELLOW SUBMARINE",
+        minicrypto::byte_string((int)16, '\0')
+      ),
+      "YELLOW SUBMARINE",
+      minicrypto::byte_string((int)16, '\0')
+    )
+    ==
+    "Ehrsam, Meyer, Smith and Tuchman invented the cipher block chaining (CBC)"
+  );
+
+  REQUIRE(
+    decrypt_cbc(
+      encrypt_cbc(
+        "YELLOW_SUBMARIN\x01",
+        "YELLOW SUBMARINE",
+        minicrypto::byte_string( (int)16, '\0' )
+      ),
+      "YELLOW SUBMARINE",
+      minicrypto::byte_string( (int)16, '\0' )
+    )
+    ==
+    "YELLOW_SUBMARIN\x01"
   );
 }
 

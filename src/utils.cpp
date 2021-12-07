@@ -396,11 +396,10 @@ minicrypto::decrypt_aes_ecb(
 
   EVP_CIPHER_CTX_free(ctx);
 
-  return pkcs7_unpad({
-      output.cbegin(),
-      output.cbegin() + byte_count
-    }, key.size()
-  );
+  return {
+    output.cbegin(),
+    output.cbegin() + byte_count
+  };
 }
 
 
@@ -418,6 +417,8 @@ minicrypto::encrypt_aes_ecb(
 
   if (!(ctx = EVP_CIPHER_CTX_new()))
     throw "EVP_CIPHER_CTX_new failed";
+
+  EVP_CIPHER_CTX_set_padding(ctx, 0);
 
   if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), nullptr, (const uint8_t*)key.data(), nullptr))
     throw "EVP_aes_128_ecb failed";
@@ -469,29 +470,38 @@ minicrypto::find_most_repeated_block(
 minicrypto::byte_string
 minicrypto::pkcs7_pad(const minicrypto::byte_string& input, const size_t blocksize)
 {
-  if (input.size() > blocksize)
+  if (blocksize <= 0)
   {
-    throw std::runtime_error("pkcs7_pad: input length > blocksize!");
+    return input;
   }
 
-  if (blocksize - input.size() > 0xFF)
+  const auto offset = (input.size() / blocksize) * blocksize;
+  if ((offset + blocksize) - input.size() > 0xFF)
   {
     throw std::runtime_error("pkcs7_pad: (blocksize - input length) > 0xFF!");
   }
 
-  const uint8_t filler_byte = static_cast<uint8_t>(blocksize - input.size());
+  const uint8_t filler_byte = (input.size() % blocksize == 0) // Needs a full padding block?
+                            ? static_cast<uint8_t>(blocksize)
+                            : static_cast<uint8_t>(offset + blocksize - input.size());
+
   const auto padding = minicrypto::byte_string(filler_byte, filler_byte);
   return input + padding;
 }
 
 minicrypto::byte_string
-minicrypto::pkcs7_unpad(const minicrypto::byte_string& input, const size_t blocksize)
+minicrypto::pkcs7_unpad(
+  const minicrypto::byte_string& input,
+  const size_t blocksize
+)
 {
-  const auto blocks = (input.size() / blocksize) - 1;
+  const auto blocks = input.size() > blocksize
+                    ? (input.size() / blocksize) - 1
+                    : 0;
   const auto last_block = input.substr(blocks * blocksize);
   if (last_block.size() != blocksize)
   {
-    throw std::runtime_error("pkcs7_unpad: last block not size of a block!");
+    return input;
   }
 
   const auto last_byte = last_block.at(blocksize - 1);
@@ -544,6 +554,40 @@ minicrypto::decrypt_cbc(
     output += plaintext;
 
     last_block = block;
+  }
+
+  return pkcs7_unpad(output, key.size());
+}
+
+
+minicrypto::byte_string
+minicrypto::encrypt_cbc(
+  const minicrypto::byte_string& input,
+  const minicrypto::byte_string& key,
+  const minicrypto::byte_string& iv
+)
+{
+  minicrypto::byte_string output{};
+
+  auto blocks = minicrypto::get_blocks_of_size(input, 16);
+  if (blocks.size() * 16 < input.size())
+  {
+    blocks.push_back(pkcs7_pad(input.substr(blocks.size() * 16), 16));
+  }
+  else
+  {
+    blocks.push_back(pkcs7_pad("", 16));
+  }
+
+  auto last_block = iv;
+
+  for (const auto& block : blocks)
+  {
+    const auto xorred    = minicrypto::xor_byte_strings(block, last_block);
+    const auto encrypted = minicrypto::encrypt_aes_ecb(xorred, key);
+
+    output += encrypted;
+    last_block = encrypted;
   }
 
   return output;
