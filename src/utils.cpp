@@ -613,7 +613,7 @@ minicrypto::generate_random_key(const size_t length)
   return key;
 }
 
-uint8_t
+minicrypto::EncryptionType
 minicrypto::ecb_cbc_oracle(
   const minicrypto::byte_string& input,
   const size_t blocksize
@@ -621,6 +621,8 @@ minicrypto::ecb_cbc_oracle(
 {
   const auto blocks = minicrypto::get_blocks_of_size(input, blocksize);
   const auto repeated_block = minicrypto::find_most_repeated_block(blocks);
-  return repeated_block.confidence <= 0;
+  return repeated_block.confidence  >= 1
+    ? minicrypto::EncryptionType::EncryptionECB
+    : minicrypto::EncryptionType::EncryptionCBC;
 }
 

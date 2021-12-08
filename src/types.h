@@ -8,6 +8,13 @@ namespace minicrypto
   using byte_string   = std::string;
   using base64_string = std::string;
 
+  enum EncryptionType
+  {
+    EncryptionECB,
+    EncryptionCBC
+  };
+
+
   template <typename T_Value, typename T_Confidence=float>
   struct ValueWithConfidence
   {
