@@ -18,6 +18,7 @@ minicrypto::NodeInfo::NodeInfo(
 {
   sort_pins();
   update_dimensions();
+  event_listeners = std::map<NodeId, DataChangedEventListener>{};
 }
 
 void minicrypto::NodeInfo::sort_pins()
@@ -195,8 +196,17 @@ void minicrypto::NodeInfo::add_output_changed_event_listener(
   event_listeners[listener_id] = event_listener;
 }
 
+bool minicrypto::NodeInfo::has_event_listener(NodeId listener_id) const
+{
+  return event_listeners.find(listener_id) != event_listeners.end();
+}
+
+
 void minicrypto::NodeInfo::remove_output_changed_event_listener(NodeId listener_id)
 {
-  event_listeners.erase(listener_id);
+  if (event_listeners.find(listener_id) != event_listeners.end())
+  {
+    event_listeners.erase(listener_id);
+  }
 }
 

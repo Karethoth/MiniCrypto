@@ -1,4 +1,5 @@
 #include "context_nodes.h"
+#include <stdexcept>
 
 void minicrypto::ContextNodes::link(LinkInfo link)
 {
@@ -25,6 +26,20 @@ void minicrypto::ContextNodes::remove(NodeId node_id)
     }
   }
 }
+
+std::shared_ptr<minicrypto::NodeInfo> minicrypto::ContextNodes::get_node(NodeId id)
+{
+  for (auto& node : nodes)
+  {
+    if (node->get_id() == id)
+    {
+      return node;
+    }
+  }
+  throw std::runtime_error("Node not found");
+}
+
+
 
 bool minicrypto::ContextNodes::has_pin(PinId pin_id) const
 {
@@ -148,7 +163,8 @@ bool minicrypto::ContextNodes::remove_link(LinkId link_id)
   {
     if (link->get_id() == link_id)
     {
-      // TODO: Remove the event listener from output_pin
+      // Remove the data connection and erase the link
+      link->remove_listener();
       link = links.erase(link);
       return true;
     }

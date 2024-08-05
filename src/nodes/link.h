@@ -31,6 +31,7 @@ namespace minicrypto
     PinId  get_output_pin_id() const;
     void   register_link() const;
     void   connect_data();
+    void   remove_listener();
 
     // TODO
     //bool unregister_link();

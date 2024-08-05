@@ -55,6 +55,7 @@ namespace minicrypto
     virtual bool handle_input_changed_event(PinId pin_id, const DataChangedEvent& e);
 
     void add_output_changed_event_listener(NodeId listener_id, DataChangedEventListener event_listener);
+    bool has_event_listener(NodeId listener_id) const;
     void remove_output_changed_event_listener(NodeId listener_id);
   };
 }

@@ -158,11 +158,20 @@ TEST_CASE("Link creation and destruction", "[link_management]")
 
   // Add nodes with pins to context_nodes
   auto input_node = std::make_unique<NodeInfo>("Input Node");
+  auto input_node_id = input_node->get_id();
   PinId input_pin_id = input_node->add_pin(PinKind::Input, "Input");
-  context_nodes.add(std::move(input_node));
 
   auto output_node = std::make_unique<NodeInfo>("Output Node");
+  auto output_node_id = output_node->get_id();
   PinId output_pin_id = output_node->add_pin(PinKind::Output, "Output");
+
+  // Add an event listener to the output pin
+  input_node->add_output_changed_event_listener(output_pin_id, [](const DataChangedEvent& e) -> int {
+    // Event listener logic
+    return 0;
+  });
+
+  context_nodes.add(std::move(input_node));
   context_nodes.add(std::move(output_node));
 
   // Create a link
@@ -185,5 +194,11 @@ TEST_CASE("Link creation and destruction", "[link_management]")
   REQUIRE(std::none_of(links.begin(), links.end(), [&](const LinkInfo& link) {
     return link.get_id() == link_id;
   }));
+
+  // Verify the event listener is removed as well
+  auto input_node_ptr = context_nodes.get_node(input_node_id);
+  auto output_node_ptr = context_nodes.get_node(output_node_id);
+  REQUIRE(input_node_ptr->has_event_listener(output_pin_id) == false);
+  REQUIRE(output_node_ptr->has_event_listener(output_pin_id) == false);
 }
 

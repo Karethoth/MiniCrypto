@@ -23,6 +23,8 @@ namespace minicrypto
     void add(std::unique_ptr<NodeInfo> node);
     void remove(NodeId node_id);
 
+    std::shared_ptr<NodeInfo> get_node(NodeId id);
+
     // Returns true if pin belongs to this context
     bool has_pin(PinId pin_id) const;
 

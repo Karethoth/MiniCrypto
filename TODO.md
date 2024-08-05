@@ -15,5 +15,3 @@
 
 ## Bugs
 - Data out -pins ought to be able to connect to multiple pins
-- When a link is destroyed, destroy the event piping between the relevant pins
-    - Testable with connecting text input to text display and breaking the link. The text display should not update when the text input is changed.

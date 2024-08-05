@@ -49,6 +49,12 @@ minicrypto::PinId minicrypto::LinkInfo::get_output_pin_id() const
   return output_pin_id;
 }
 
+void minicrypto::LinkInfo::remove_listener()
+{
+  input_node->remove_output_changed_event_listener(output_pin_id);
+  output_node->remove_output_changed_event_listener(input_pin_id);
+}
+
 void minicrypto::LinkInfo::register_link() const
 {
   ImNodes::Link(id, input_pin_id, output_pin_id);
