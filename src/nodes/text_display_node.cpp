@@ -40,7 +40,7 @@ void minicrypto::TextDisplayNode::update()
 
     for (auto &event_listener : event_listeners)
     {
-      event_listener(e);
+      event_listener.second(e);
     }
   }
   draw_pins();

@@ -14,7 +14,7 @@ minicrypto::LinkInfo::LinkInfo(
   input_pin_id(input_pin_id),
   output_pin_id(output_pin_id)
 {
-  output_node->add_output_changed_event_listener([
+  output_node->add_output_changed_event_listener(input_pin_id, [
     input_node,
     output_node,
     input_pin_id,

@@ -105,7 +105,7 @@ bool minicrypto::DataTransformNode::handle_input_changed_event(
   // Trigger listeners
   for (auto& event_listener : event_listeners)
   {
-    event_listener(new_event);
+    event_listener.second(new_event);
   }
 
   return true;

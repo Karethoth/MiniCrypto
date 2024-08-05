@@ -183,9 +183,20 @@ bool minicrypto::NodeInfo::handle_input_changed_event(
 }
 
 void minicrypto::NodeInfo::add_output_changed_event_listener(
+  minicrypto::NodeId listener_id,
   minicrypto::DataChangedEventListener event_listener
 )
 {
-  event_listeners.push_back(event_listener);
+  if (event_listeners.find(listener_id) != event_listeners.end())
+  {
+    event_listeners.erase(listener_id);
+  }
+
+  event_listeners[listener_id] = event_listener;
+}
+
+void minicrypto::NodeInfo::remove_output_changed_event_listener(NodeId listener_id)
+{
+  event_listeners.erase(listener_id);
 }
 
