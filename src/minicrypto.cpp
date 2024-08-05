@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "minicrypto.h"
 
 #include "global.h"
@@ -8,12 +9,13 @@
 #include "nodes/data_transform_node.h"
 #include "nodes/link.h"
 #include "nodes/context_nodes.h"
+#include "nodes/render_node.h"
 
 #include <vector>
 #include <memory>
 
 #include <imgui.h>
-#include <backends/imgui_impl_sdl.h>
+#include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl2.h>
 #include <stdio.h>
 
@@ -53,6 +55,15 @@ int init_sdl()
 
   SDL_GLContext gl_context = SDL_GL_CreateContext(Global::sdl_window);
   SDL_GL_SetSwapInterval(1); // Enable vsync
+
+  // Initialize GLEW
+  GLenum err = glewInit();
+  if (err != GLEW_OK)
+  {
+    std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
+    return -1;
+  }
+
   return 0;
 }
 
@@ -85,6 +96,79 @@ void cleanup()
   SDL_Quit();
 }
 
+bool handle_events()
+{
+  SDL_Event event;
+  while (SDL_PollEvent(&event))
+  {
+    ImGui_ImplSDL2_ProcessEvent(&event);
+    if (event.type == SDL_QUIT)
+    {
+      return false;
+    }
+  }
+
+
+  return true;
+}
+
+void handle_pin_logic(minicrypto::ContextNodes &context_nodes)
+{
+  minicrypto::PinId input_pin_id, output_pin_id;
+  if (ImNodes::IsLinkCreated(&input_pin_id, &output_pin_id))
+  {
+    if (input_pin_id && output_pin_id)
+    {
+      if (context_nodes.has_pin(input_pin_id) &&
+          context_nodes.has_pin(output_pin_id))
+      {
+        if (!context_nodes.accept_link(input_pin_id, output_pin_id))
+        {
+            // Link wasn't accepted for some reason
+        }
+      }
+    }
+  }
+
+  minicrypto::LinkId deleted_link_id;
+  if (ImNodes::IsLinkDestroyed(&deleted_link_id))
+  {
+    if (context_nodes.has_link(deleted_link_id))
+    {
+      if (!context_nodes.remove_link(deleted_link_id))
+      {
+          // Link wasn't removed for some reason
+      }
+    }
+  }
+}
+
+void render()
+{
+  const ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+  auto io = ImGui::GetIO();
+  ImGui::Render();
+
+  glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+  glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // You may want this if using this code in an OpenGL 3+
+  // context where shaders may be bound
+  //glUseProgram(0);
+  ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+  SDL_GL_SwapWindow(Global::sdl_window);
+
+  if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+  {
+    SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+    SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+    ImGui::UpdatePlatformWindows();
+    ImGui::RenderPlatformWindowsDefault();
+    SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+  }
+}
+
 int main(int, char**)
 {
   if (init_sdl() < 0)
@@ -94,29 +178,23 @@ int main(int, char**)
 
   init_imgui();
 
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
   const auto imnodes_context = ImNodes::CreateContext();
-  ImNodes::StyleColorsDark();
-
   minicrypto::ContextNodes context_nodes{};
+
+  ImNodes::StyleColorsDark();
 
   bool done = false;
   while (!done)
   {
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
+    if (!handle_events())
     {
-      ImGui_ImplSDL2_ProcessEvent(&event);
-      if (event.type == SDL_QUIT)
-      {
-        done = true;
-      }
+      done = true;
+      break;
     }
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL2_NewFrame();
-    ImGui_ImplSDL2_NewFrame(Global::sdl_window);
+    ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
     auto& io = ImGui::GetIO();
@@ -127,6 +205,8 @@ int main(int, char**)
       io.DisplaySize.x,
       io.DisplaySize.y
     };
+
+    // Create the main window and layout
 
     ImGui::SetNextWindowPos(window_pos);
     ImGui::SetNextWindowSize(window_size);
@@ -151,6 +231,7 @@ int main(int, char**)
       io.Framerate ? 1000.0f / io.Framerate : 0.0f
     );
 
+    // Update Nodes in the middle column
     ImNodes::SetCurrentContext(imnodes_context);
     ImNodes::BeginNodeEditor();
     ImNodes::PushAttributeFlag(
@@ -166,6 +247,8 @@ int main(int, char**)
     ImNodes::PopAttributeFlag();
 
     ImGui::NextColumn();
+
+    // Buttons for adding nodes
     ImGui::Text("Add Nodes");
     if (ImGui::Button("Transform Node", ImVec2{ 200, 30 }))
     {
@@ -185,58 +268,19 @@ int main(int, char**)
       context_nodes.add(std::move(node));
     }
 
+    if (ImGui::Button("Render Node", ImVec2{ 200, 30 }))
+    {
+      auto node = std::make_unique<minicrypto::RenderNode>();
+      context_nodes.add(std::move(node));
+    }
+
     ImGui::End();
 
+    // Handle link creation and deletion
+    handle_pin_logic(context_nodes);
 
-    minicrypto::PinId input_pin_id, output_pin_id;
-    if (ImNodes::IsLinkCreated(&input_pin_id, &output_pin_id))
-    {
-      if (input_pin_id && output_pin_id)
-      {
-        if (context_nodes.has_pin(input_pin_id) &&
-            context_nodes.has_pin(output_pin_id))
-        {
-          if (!context_nodes.accept_link(input_pin_id, output_pin_id))
-          {
-              // Link wasn't accepted for some reason
-          }
-        }
-      }
-    }
-
-    minicrypto::LinkId deleted_link_id;
-    if (ImNodes::IsLinkDestroyed(&deleted_link_id))
-    {
-      if (context_nodes.has_link(deleted_link_id))
-      {
-        if (!context_nodes.remove_link(deleted_link_id))
-        {
-            // Link wasn't removed for some reason
-        }
-      }
-    }
-
-    // Rendering
-    ImGui::Render();
-
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // You may want this if using this code in an OpenGL 3+
-    // context where shaders may be bound
-    //glUseProgram(0);
-    ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
-    SDL_GL_SwapWindow(Global::sdl_window);
-
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-      SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-      SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-      ImGui::UpdatePlatformWindows();
-      ImGui::RenderPlatformWindowsDefault();
-      SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
-    }
+    // Render the scene
+    render();
   }
 
   // Cleanup

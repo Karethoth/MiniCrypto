@@ -6,7 +6,8 @@ namespace minicrypto
   {
     Default,
     TextInput,
-    DataTransform
+    DataTransform,
+    Render
   };
 }
 

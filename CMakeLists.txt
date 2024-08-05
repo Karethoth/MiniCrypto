@@ -29,11 +29,12 @@ set (PROJECT_SOURCES
   "src/nodes/pin.cpp"
   "src/nodes/link.cpp"
   "src/nodes/context_nodes.cpp"
+  "src/nodes/render_node.cpp"
   "src/events/events.cpp"
 )
 
 set (IMGUI_SOURCES
-  "3rdparty/imgui/backends/imgui_impl_sdl.cpp"
+  "3rdparty/imgui/backends/imgui_impl_sdl2.cpp"
   "3rdparty/imgui/backends/imgui_impl_opengl2.cpp"
 )
 
@@ -58,15 +59,18 @@ target_link_libraries(minicrypto
   ${SDL2_LIBRARIES}
   ${IMGUI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
+  ${GLEW_LIBRARY}
 )
 
 # SDL2.dll and OpenSSL for Windows
 if (WIN32)
   if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(SDL2_LIB_DIR "x64")
+    set(GLEW_LIB_DIR "x64")
     set(OPENSSL_AFFIX "x64")
   else()
     set(SDL2_LIB_DIR "x86")
+    set(GLEW_LIB_DIR "x86")
     set(OPENSSL_AFFIX "x86")
   endif()
 
@@ -77,10 +81,14 @@ if (WIN32)
 
   add_custom_command(TARGET minicrypto POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${PROJECT_SOURCE_DIR}/3rdparty/glew/bin/Release/${GLEW_LIB_DIR}/glew32.dll"
+    $<TARGET_FILE_DIR:minicrypto>/glew32.dll)
+
+  add_custom_command(TARGET minicrypto POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${PROJECT_SOURCE_DIR}/3rdparty/openssl/libcrypto-3-${OPENSSL_AFFIX}.dll"
     $<TARGET_FILE_DIR:minicrypto>/libcrypto-3-${OPENSSL_AFFIX}.dll)
 endif()
 
 include(CTest)
 add_subdirectory(tests)
-

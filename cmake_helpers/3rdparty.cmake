@@ -17,3 +17,17 @@ find_package(SDL2 REQUIRED)
 include(cmake_helpers/imgui.cmake)
 include(cmake_helpers/openssl.cmake)
 
+if (WIN32)
+  if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(GLEW_LIB_DIR "x64")
+  else()
+    set(GLEW_LIB_DIR "x86")
+  endif()
+
+  set(GLEW_ROOT "${CMAKE_SOURCE_DIR}/3rdparty/glew")
+  set(GLEW_INCLUDE_DIR "${GLEW_ROOT}/include")
+  set(GLEW_LIBRARY "${GLEW_ROOT}/lib/Release/${GLEW_LIB_DIR}/glew32.lib")
+
+  include_directories(${GLEW_INCLUDE_DIR})
+endif ()
+

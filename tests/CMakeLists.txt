@@ -22,7 +22,7 @@ set(PROJECT_SOURCES
   "../src/utils.cpp"
   "../src/types.cpp"
 )
-add_executable(tests tests.cpp ${PROJECT_SOURCES})
+add_executable(tests core_tests.cpp exercises_tests.cpp ${PROJECT_SOURCES})
 set_property(TARGET tests PROPERTY CXX_STANDARD 17)
 
 include_directories(
