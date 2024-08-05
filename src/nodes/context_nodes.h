@@ -35,6 +35,8 @@ namespace minicrypto
     // Returns true and removes the link if the context can remove the link
     bool remove_link(LinkId link_id);
 
+    const std::vector<LinkInfo>& get_links() const;
+
     void update();
   };
 }

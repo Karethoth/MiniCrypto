@@ -3,17 +3,24 @@
 #include <algorithm>
 #include <stdexcept>
 
-
 minicrypto::NodeInfo::NodeInfo(
   std::string name,
   std::vector<PinInfo> pins,
-  ImVec2 node_size
+  ImVec2 node_size,
+  bool can_add_pins
 )
 : type(NodeType::Default),
   name(name),
   id(Global::imgui_resource_id_counter++),
   pins(pins),
-  node_size(node_size)
+  node_size(node_size),
+  can_add_pins(can_add_pins)
+{
+  sort_pins();
+  update_dimensions();
+}
+
+void minicrypto::NodeInfo::sort_pins()
 {
   // Order pins by type and id for nice rendering
   std::sort(
@@ -30,8 +37,6 @@ minicrypto::NodeInfo::NodeInfo(
 
     return type_a == minicrypto::PinKind::Input;
   });
-
-  update_dimensions();
 }
 
 void minicrypto::NodeInfo::update()
@@ -44,6 +49,10 @@ void minicrypto::NodeInfo::update()
 
 void minicrypto::NodeInfo::update_dimensions()
 {
+#ifdef TESTING
+  return;
+#endif
+  
   max_label_width = 0.f;
   for (auto pin = pins.begin(); pin != pins.end(); ++pin)
   {
@@ -65,6 +74,10 @@ float minicrypto::NodeInfo::max_width_of_remining_pins(
   const std::vector<minicrypto::PinInfo>::const_iterator end
 ) const
 {
+#ifdef TESTING
+  return 0.f;
+#endif
+
   float result = 0.f;
   while (pin_it != end)
   {
@@ -77,6 +90,10 @@ float minicrypto::NodeInfo::max_width_of_remining_pins(
 
 void minicrypto::NodeInfo::draw_pins()
 {
+#ifdef TESTING
+  return;
+#endif
+
   bool printing_in_pins = true;
 
   ImGui::BeginGroup();
@@ -138,6 +155,22 @@ std::optional<minicrypto::PinInfo> minicrypto::NodeInfo::get_pin(
   }
 
   return result;
+}
+
+minicrypto::PinId minicrypto::NodeInfo::add_pin(PinKind pin_kind, const std::string& pin_text)
+{
+  if (!can_add_pins)
+  {
+    return false;
+  }
+
+  auto pin = minicrypto::PinInfo(pin_kind, pin_text);
+  pins.push_back(pin);
+
+  sort_pins();
+  update_dimensions();
+
+  return pin.get_id();
 }
 
 bool minicrypto::NodeInfo::handle_input_changed_event(

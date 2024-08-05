@@ -24,6 +24,9 @@ namespace minicrypto
 
     ImVec2 node_size;
     float max_label_width;
+    bool can_add_pins;
+
+    void sort_pins();
     void update_dimensions();
 
     float max_width_of_remining_pins(
@@ -35,11 +38,14 @@ namespace minicrypto
     NodeInfo(
       std::string name = "Node",
       std::vector<PinInfo> pins = {},
-      ImVec2 node_size = { 200, 0 }
+      ImVec2 node_size = { 200, 0 },
+      bool can_add_pins = true
     );
 
     NodeType get_type() const;
     NodeId get_id() const;
+
+    PinId add_pin(PinKind pin_kind, const std::string& pin_text);
     std::optional<PinInfo> get_pin(const PinId pin_id) const;
 
     virtual void update();
@@ -51,6 +57,7 @@ namespace minicrypto
     void add_output_changed_event_listener(DataChangedEventListener event_listener);
 
     // TODO: Add remove function which uses the key returned by add_event_handler
+
   };
 }
 

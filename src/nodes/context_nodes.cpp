@@ -39,6 +39,11 @@ bool minicrypto::ContextNodes::has_pin(PinId pin_id) const
   return false;
 }
 
+const std::vector<minicrypto::LinkInfo>& minicrypto::ContextNodes::get_links() const
+{
+  return links;
+}
+
 bool minicrypto::ContextNodes::has_link(LinkId link_id) const
 {
   for (const auto& link : links)

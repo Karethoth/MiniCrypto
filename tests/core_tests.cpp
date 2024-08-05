@@ -152,22 +152,17 @@ TEST_CASE("Random key generator", "[generate_random_key]")
   REQUIRE(minicrypto::generate_random_key(16).size() == 16);
 }
 
-
 TEST_CASE("Link creation and destruction", "[link_management]")
 {
   ContextNodes context_nodes;
 
-  // Create pins
-  PinId input_pin_id = 1;
-  PinId output_pin_id = 2;
-
   // Add nodes with pins to context_nodes
-  auto input_node = std::make_unique<NodeInfo>(/* parameters to initialize NodeInfo */);
-  input_node->add_pin(input_pin_id, PinKind::Input);
+  auto input_node = std::make_unique<NodeInfo>("Input Node");
+  PinId input_pin_id = input_node->add_pin(PinKind::Input, "Input");
   context_nodes.add(std::move(input_node));
 
-  auto output_node = std::make_unique<NodeInfo>(/* parameters to initialize NodeInfo */);
-  output_node->add_pin(output_pin_id, PinKind::Output);
+  auto output_node = std::make_unique<NodeInfo>("Output Node");
+  PinId output_pin_id = output_node->add_pin(PinKind::Output, "Output");
   context_nodes.add(std::move(output_node));
 
   // Create a link

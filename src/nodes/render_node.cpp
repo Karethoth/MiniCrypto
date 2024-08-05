@@ -53,21 +53,21 @@ minicrypto::RenderNode::~RenderNode()
 
 void minicrypto::RenderNode::cleanup()
 {
-    if (framebuffer)
-    {
-        glDeleteFramebuffers(1, &framebuffer);
-        framebuffer = 0;
-    }
-    if (texture)
-    {
-        glDeleteTextures(1, &texture);
-        texture = 0;
-    }
-    if (depthbuffer)
-    {
-        glDeleteRenderbuffers(1, &depthbuffer);
-        depthbuffer = 0;
-    }
+  if (framebuffer)
+  {
+    glDeleteFramebuffers(1, &framebuffer);
+    framebuffer = 0;
+  }
+  if (texture)
+  {
+    glDeleteTextures(1, &texture);
+    texture = 0;
+  }
+  if (depthbuffer)
+  {
+    glDeleteRenderbuffers(1, &depthbuffer);
+    depthbuffer = 0;
+  }
 }
 
 void minicrypto::RenderNode::update()
