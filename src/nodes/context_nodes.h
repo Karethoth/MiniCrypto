@@ -40,6 +40,8 @@ namespace minicrypto
     const std::vector<LinkInfo>& get_links() const;
 
     void update();
+
+    void handle_pin_logic();
   };
 }
 

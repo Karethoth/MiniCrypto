@@ -187,3 +187,34 @@ void minicrypto::ContextNodes::update()
   }
 }
 
+
+void minicrypto::ContextNodes::handle_pin_logic()
+{
+  minicrypto::PinId input_pin_id, output_pin_id;
+  if (ImNodes::IsLinkCreated(&input_pin_id, &output_pin_id))
+  {
+    if (input_pin_id && output_pin_id)
+    {
+      if (has_pin(input_pin_id) &&
+          has_pin(output_pin_id))
+      {
+        if (!accept_link(input_pin_id, output_pin_id))
+        {
+            // Link wasn't accepted for some reason
+        }
+      }
+    }
+  }
+
+  minicrypto::LinkId deleted_link_id;
+  if (ImNodes::IsLinkDestroyed(&deleted_link_id))
+  {
+    if (has_link(deleted_link_id))
+    {
+      if (!remove_link(deleted_link_id))
+      {
+          // Link wasn't removed for some reason
+      }
+    }
+  }
+}

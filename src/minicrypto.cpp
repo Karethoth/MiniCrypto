@@ -112,37 +112,6 @@ bool handle_events()
   return true;
 }
 
-void handle_pin_logic(minicrypto::ContextNodes &context_nodes)
-{
-  minicrypto::PinId input_pin_id, output_pin_id;
-  if (ImNodes::IsLinkCreated(&input_pin_id, &output_pin_id))
-  {
-    if (input_pin_id && output_pin_id)
-    {
-      if (context_nodes.has_pin(input_pin_id) &&
-          context_nodes.has_pin(output_pin_id))
-      {
-        if (!context_nodes.accept_link(input_pin_id, output_pin_id))
-        {
-            // Link wasn't accepted for some reason
-        }
-      }
-    }
-  }
-
-  minicrypto::LinkId deleted_link_id;
-  if (ImNodes::IsLinkDestroyed(&deleted_link_id))
-  {
-    if (context_nodes.has_link(deleted_link_id))
-    {
-      if (!context_nodes.remove_link(deleted_link_id))
-      {
-          // Link wasn't removed for some reason
-      }
-    }
-  }
-}
-
 void render()
 {
   const ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -169,29 +138,11 @@ void render()
   }
 }
 
-int main(int, char**)
+bool imgui_update(
+  ImNodesContext* const imnodes_context,
+  minicrypto::ContextNodes& context_nodes
+)
 {
-  if (init_sdl() < 0)
-  {
-    return -1;
-  }
-
-  init_imgui();
-
-  const auto imnodes_context = ImNodes::CreateContext();
-  minicrypto::ContextNodes context_nodes{};
-
-  ImNodes::StyleColorsDark();
-
-  bool done = false;
-  while (!done)
-  {
-    if (!handle_events())
-    {
-      done = true;
-      break;
-    }
-
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL2_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -207,7 +158,6 @@ int main(int, char**)
     };
 
     // Create the main window and layout
-
     ImGui::SetNextWindowPos(window_pos);
     ImGui::SetNextWindowSize(window_size);
 
@@ -275,9 +225,38 @@ int main(int, char**)
     }
 
     ImGui::End();
+    return true;
+}
+
+int main(int, char**)
+{
+  if (init_sdl() < 0)
+  {
+    return -1;
+  }
+
+  init_imgui();
+
+  const auto imnodes_context = ImNodes::CreateContext();
+  minicrypto::ContextNodes context_nodes{};
+
+  ImNodes::StyleColorsDark();
+
+  while (true)
+  {
+    if (!handle_events())
+    {
+      break;
+    }
+
+
+    if (!imgui_update(imnodes_context, context_nodes))
+    {
+      break;
+    }
 
     // Handle link creation and deletion
-    handle_pin_logic(context_nodes);
+    context_nodes.handle_pin_logic();
 
     // Render the scene
     render();
