@@ -31,6 +31,8 @@ set (PROJECT_SOURCES
   "src/nodes/link.cpp"
   "src/nodes/context_nodes.cpp"
   "src/nodes/render_node.cpp"
+  "src/networking/net_query_statistics.cpp"
+  "src/networking/map/tile_fetcher.cpp"
   "src/events/events.cpp"
 )
 
@@ -56,12 +58,12 @@ foreach(dir ${dirs})
 endforeach()
 
 target_link_libraries(minicrypto
+  ${CURL_LIBRARIES}
   ${OPENGL_LIBRARIES}
   ${SDL2_LIBRARIES}
   ${IMGUI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
   ${GLEW_LIBRARY}
-  ${CURL_LIBRARIES}
 )
 
 # SDL2.dll and OpenSSL for Windows
@@ -96,7 +98,7 @@ if (WIN32)
   add_custom_command(TARGET minicrypto POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${PROJECT_SOURCE_DIR}/3rdparty/curl/bin/libcurl-${CURL_LIB_DIR}.dll"
-    $<TARGET_FILE_DIR:minicrypto>/libcurl.dll)
+    $<TARGET_FILE_DIR:minicrypto>/libcurl-${CURL_LIB_DIR}.dll)
 endif()
 
 include(CTest)

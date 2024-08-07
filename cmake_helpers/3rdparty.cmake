@@ -31,7 +31,7 @@ if (WIN32)
 
   set(CURL_ROOT "${CMAKE_SOURCE_DIR}/3rdparty/curl")
   set(CURL_INCLUDE_DIRS "${CURL_ROOT}/include")
-  set(CURL_LIBRARIES "${CURL_ROOT}/lib/libcurl.a")
+  set(CURL_LIBRARIES "${CURL_ROOT}/lib/libcurl.dll.a")
   include_directories(${CURL_INCLUDE_DIRS})
 endif ()
 

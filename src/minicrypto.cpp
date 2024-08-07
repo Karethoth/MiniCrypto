@@ -18,6 +18,7 @@
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl2.h>
 #include <stdio.h>
+#include <curl/curl.h>
 
 using minicrypto::Global;
 
@@ -87,6 +88,7 @@ void init_imgui()
 
 void cleanup()
 {
+  curl_global_cleanup();
   ImGui_ImplOpenGL2_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
@@ -236,6 +238,7 @@ int main(int, char**)
   }
 
   init_imgui();
+  curl_global_init(CURL_GLOBAL_DEFAULT);
 
   const auto imnodes_context = ImNodes::CreateContext();
   minicrypto::ContextNodes context_nodes{};
@@ -263,7 +266,6 @@ int main(int, char**)
 
   // Cleanup
   ImNodes::DestroyContext(imnodes_context);
-
   cleanup();
   return 0;
 }
