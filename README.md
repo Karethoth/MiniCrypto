@@ -4,12 +4,13 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 *Thanks to [shxy0](https://github.com/shxy0) for setting up an [example project](https://github.com/shxy0/SDLImGui) for CMake+ImGui+SDL2.*
 
 ## Dependencies
-- C++17 Compiler
+- C++20 Compiler
 - CMake
 - [ImGui](https://github.com/ocornut/imgui)
 - [imnodes](https://github.com/Nelarius/imnodes)
 - [SDL2](https://www.libsdl.org)
 - OpenSSL
+- cURL
 
 ## Windows
 ### Installing dependencies on Windows
