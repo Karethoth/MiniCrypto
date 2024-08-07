@@ -249,7 +249,6 @@ int main(int, char**)
       break;
     }
 
-
     if (!imgui_update(imnodes_context, context_nodes))
     {
       break;

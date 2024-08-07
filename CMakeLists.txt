@@ -13,6 +13,7 @@ include_directories(
   ${SDL2_INCLUDE_DIRS}
   ${IMGUI_INCLUDE_DIR}
   ${OPENSSL_INCLUDE_DIR}
+  ${CURL_INCLUDE_DIRS}
 )
 
 set (PROJECT_SOURCES
@@ -60,6 +61,7 @@ target_link_libraries(minicrypto
   ${IMGUI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
   ${GLEW_LIBRARY}
+  ${CURL_LIBRARIES}
 )
 
 # SDL2.dll and OpenSSL for Windows
@@ -68,10 +70,12 @@ if (WIN32)
     set(SDL2_LIB_DIR "x64")
     set(GLEW_LIB_DIR "x64")
     set(OPENSSL_AFFIX "x64")
+    set(CURL_LIB_DIR "x64")
   else()
     set(SDL2_LIB_DIR "x86")
     set(GLEW_LIB_DIR "x86")
     set(OPENSSL_AFFIX "x86")
+    set(CURL_LIB_DIR "x86")
   endif()
 
   add_custom_command(TARGET minicrypto POST_BUILD
@@ -88,6 +92,11 @@ if (WIN32)
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${PROJECT_SOURCE_DIR}/3rdparty/openssl/libcrypto-3-${OPENSSL_AFFIX}.dll"
     $<TARGET_FILE_DIR:minicrypto>/libcrypto-3-${OPENSSL_AFFIX}.dll)
+
+  add_custom_command(TARGET minicrypto POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${PROJECT_SOURCE_DIR}/3rdparty/curl/bin/libcurl-${CURL_LIB_DIR}.dll"
+    $<TARGET_FILE_DIR:minicrypto>/libcurl.dll)
 endif()
 
 include(CTest)

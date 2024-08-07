@@ -27,7 +27,11 @@ if (WIN32)
   set(GLEW_ROOT "${CMAKE_SOURCE_DIR}/3rdparty/glew")
   set(GLEW_INCLUDE_DIR "${GLEW_ROOT}/include")
   set(GLEW_LIBRARY "${GLEW_ROOT}/lib/Release/${GLEW_LIB_DIR}/glew32.lib")
-
   include_directories(${GLEW_INCLUDE_DIR})
+
+  set(CURL_ROOT "${CMAKE_SOURCE_DIR}/3rdparty/curl")
+  set(CURL_INCLUDE_DIRS "${CURL_ROOT}/include")
+  set(CURL_LIBRARIES "${CURL_ROOT}/lib/libcurl.a")
+  include_directories(${CURL_INCLUDE_DIRS})
 endif ()
 
