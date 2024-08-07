@@ -74,5 +74,4 @@ fi
 echo ""
 echo "Dependencies installed successfully."
 echo ""
-read -p "Press Enter to exit this script..."
 
