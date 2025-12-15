@@ -5,6 +5,10 @@ cmake_minimum_required (VERSION 3.8)
 
 project ("minicrypto")
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 include(cmake_helpers/3rdparty.cmake)
 include(cmake_helpers/config.cmake)
 
@@ -14,6 +18,7 @@ include_directories(
   ${IMGUI_INCLUDE_DIR}
   ${OPENSSL_INCLUDE_DIR}
   ${CURL_INCLUDE_DIRS}
+  ${EPOXY_INCLUDE_DIRS}
 )
 
 set (PROJECT_SOURCES
@@ -51,7 +56,7 @@ add_executable (minicrypto
   ${IMNODES_SOURCES}
 )
 
-set_property(TARGET minicrypto PROPERTY CXX_STANDARD 17)
+set_property(TARGET minicrypto PROPERTY CXX_STANDARD 20)
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 foreach(dir ${dirs})
   message(STATUS "dir='${dir}'")
@@ -63,8 +68,13 @@ target_link_libraries(minicrypto
   ${SDL2_LIBRARIES}
   ${IMGUI_LIBRARIES}
   ${OPENSSL_LIBRARIES}
-  ${GLEW_LIBRARY}
 )
+
+if (WIN32)
+  target_link_libraries(minicrypto ${GLEW_LIBRARY})
+else()
+  target_link_libraries(minicrypto ${EPOXY_LIBRARIES})
+endif()
 
 # SDL2.dll and OpenSSL for Windows
 if (WIN32)

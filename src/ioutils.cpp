@@ -16,7 +16,7 @@ minicrypto::read_lines_from_file(const std::string& path)
   {
     throw std::runtime_error(
       "Failed to open '" + path + "' from '" +
-      std::filesystem::current_path().u8string() + "'"
+      std::filesystem::current_path().string() + "'"
     );
   }
 
@@ -40,7 +40,7 @@ minicrypto::byte_string minicrypto::read_line_split_data_file(
   {
     throw std::runtime_error(
       "Failed to open '" + path + "' from '" +
-      std::filesystem::current_path().u8string() + "'"
+      std::filesystem::current_path().string() + "'"
     );
   }
 
@@ -64,7 +64,7 @@ std::string minicrypto::read_all_from_file(
   {
     throw std::runtime_error(
       "Failed to open '" + path + "' from '" +
-      std::filesystem::current_path().u8string() + "'"
+      std::filesystem::current_path().string() + "'"
     );
   }
 
@@ -78,13 +78,13 @@ std::string minicrypto::find_project_directory()
   auto cwd = std::filesystem::current_path();
   while (cwd.has_parent_path())
   {
-    if (std::filesystem::is_directory(cwd.u8string() + "/data"))
+    if (std::filesystem::is_directory(cwd / "data"))
     {
       break;
     }
 
     cwd = cwd.parent_path();
   }
-  return cwd.u8string();
+  return cwd.string();
 }
 

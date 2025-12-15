@@ -4,7 +4,7 @@ if(NOT Catch2_POPULATED)
   FetchContent_Declare(
     Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG        v3.0.0-preview3
+    GIT_TAG        v3.5.4
   )
 
   FetchContent_MakeAvailable(Catch2)
@@ -52,7 +52,7 @@ set(PROJECT_SOURCES
 
 add_executable(tests core_tests.cpp exercises_tests.cpp ${PROJECT_SOURCES} ${IMGUI_SOURCES} ${IMNODES_SOURCES})
 
-set_property(TARGET tests PROPERTY CXX_STANDARD 17)
+set_property(TARGET tests PROPERTY CXX_STANDARD 20)
 
 include_directories(
   ${OPENSSL_INCLUDE_DIR}
@@ -65,6 +65,11 @@ target_link_libraries(tests
 )
 
 target_compile_definitions(tests PRIVATE TESTING)
+
+# Expose each Catch2 TEST_CASE to CTest individually
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+include(Catch)
+catch_discover_tests(tests)
 
 # DLLS for windows
 if (WIN32)
@@ -94,5 +99,5 @@ if (WIN32)
     $<TARGET_FILE_DIR:tests>/libcrypto-3-${OPENSSL_AFFIX}.dll)
 endif()
 
-add_test(run_tests tests)
+
 

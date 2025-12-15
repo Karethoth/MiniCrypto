@@ -3,6 +3,11 @@
 
 #include "frequency_analysis.h"
 
+#include <algorithm>
+#include <cctype>
+#include <cstring>
+#include <functional>
+#include <stdexcept>
 #include <unordered_map>
 #include <random>
 
@@ -331,18 +336,14 @@ minicrypto::guess_repeating_key_xor_length(
   return current_best;
 }
 
-std::unordered_map<size_t, minicrypto::byte_string>
-split_data_into_columns(const minicrypto::byte_string &input, size_t n)
+static std::vector<minicrypto::byte_string>
+split_data_into_columns(const minicrypto::byte_string& input, size_t n)
 {
-  std::unordered_map<size_t, minicrypto::byte_string> columns;
-
-  size_t counter = 0;
-  for (const auto& c : input)
+  std::vector<minicrypto::byte_string> columns(n);
+  for (size_t i = 0; i < input.size(); ++i)
   {
-    const auto column = counter++ % n;
-    columns[column].push_back(c);
+    columns[i % n].push_back(input[i]);
   }
-
   return columns;
 }
 
@@ -352,12 +353,13 @@ minicrypto::decrypt_repeating_key_xor(const byte_string& input)
   const auto best_length_guess = guess_repeating_key_xor_length(input);
   const auto data_columns = split_data_into_columns(input, best_length_guess.value);
   
-  minicrypto::byte_string key = "";
-  for (const auto& column : data_columns)
+  minicrypto::byte_string key(best_length_guess.value, '\0');
+  for (size_t column_index = 0; column_index < data_columns.size(); ++column_index)
   {
-    const auto decrypt_trial = decrypt_single_char_xor(column.second);
-    const auto key_byte = decrypt_trial.value[0] ^ column.second[0];
-    key += key_byte;
+    const auto& column = data_columns[column_index];
+    const auto decrypt_trial = decrypt_single_char_xor(column);
+    const auto key_byte = decrypt_trial.value[0] ^ column[0];
+    key[column_index] = key_byte;
   }
 
   return { xor_byte_strings(input, key), 0};

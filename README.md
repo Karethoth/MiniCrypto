@@ -37,11 +37,28 @@ Practice environment for the [CryptoPals](https://cryptopals.com) challenges.
 - Hit `Ctrl+F5`
 
 ## Linux
-- Install SDL2 development libraries
+- Install the system dependencies (SDL2, OpenGL, OpenSSL, cURL, GLEW, X11 Xi)
 - Run `./install-dependencies-linux.sh` to populate `3rdparty/imgui` and `3rdparty/imnodes`
 - Basic CMake process
-  - `mkdir build && cd build && cmake .. && make`
-  - You can run the tests with `make test`
-    - For more verbose output you can run
-      - `./tests/tests -s`
+  - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`
+  - `cmake --build build -j`
+  - Run: `./build/minicrypto`
+  - Run tests: `ctest --test-dir build` (or `./build/tests/tests -s`)
+
+### Bazzite (Fedora Atomic)
+Recommended: build inside a Toolbox (keeps the host immutable).
+
+```sh
+toolbox create -c minicrypto
+toolbox enter minicrypto
+sudo dnf install -y gcc-c++ cmake make git pkgconf-pkg-config \
+  SDL2-devel mesa-libGL-devel libX11-devel libXi-devel \
+  libepoxy-devel libcurl-devel openssl-devel
+
+cd /path/to/MiniCrypto
+./install-dependencies-linux.sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+./build/minicrypto
+```
 

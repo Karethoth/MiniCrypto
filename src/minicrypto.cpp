@@ -1,4 +1,8 @@
+#ifdef _WIN32
 #include <GL/glew.h>
+#else
+#include <epoxy/gl.h>
+#endif
 #include "minicrypto.h"
 
 #include "global.h"
@@ -57,13 +61,15 @@ int init_sdl()
   SDL_GLContext gl_context = SDL_GL_CreateContext(Global::sdl_window);
   SDL_GL_SetSwapInterval(1); // Enable vsync
 
-  // Initialize GLEW
+#ifdef _WIN32
+  // Initialize GLEW (Windows)
   GLenum err = glewInit();
   if (err != GLEW_OK)
   {
     std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
     return -1;
   }
+#endif
 
   return 0;
 }

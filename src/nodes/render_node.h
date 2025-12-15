@@ -2,7 +2,11 @@
 
 #include "../events/events.h"
 #include "node.h"
+#ifdef _WIN32
 #include <GL/glew.h>
+#else
+#include <epoxy/gl.h>
+#endif
 
 namespace minicrypto
 {

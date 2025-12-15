@@ -1,8 +1,11 @@
+#ifdef _WIN32
 #include <GL/glew.h>
+#else
+#include <epoxy/gl.h>
+#endif
 #include "render_node.h"
 
 #include <GL/gl.h>
-#include <GL/glu.h>
 
 #include <iostream>
 #include <cmath> // For sin and cos

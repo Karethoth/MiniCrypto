@@ -14,6 +14,20 @@ endif ()
 
 find_package(SDL2 REQUIRED)
 
+if (NOT WIN32)
+  find_package(CURL REQUIRED)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(EPOXY REQUIRED IMPORTED_TARGET epoxy)
+
+  # Normalize variables to what the top-level CMakeLists expects.
+  if (TARGET CURL::libcurl)
+    set(CURL_LIBRARIES CURL::libcurl)
+  endif ()
+
+  set(EPOXY_LIBRARIES PkgConfig::EPOXY)
+  set(EPOXY_INCLUDE_DIRS ${EPOXY_INCLUDE_DIRS})
+endif ()
+
 include(cmake_helpers/imgui.cmake)
 include(cmake_helpers/openssl.cmake)
 
